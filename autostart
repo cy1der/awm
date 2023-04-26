@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+exec picom &
+exec xfce4-power-manager &
+exec env XSECURELOCK_NO_COMPOSITE=1 xss-lock xsecurelock &
+exec thunar --daemon &
+exec mount /mnt/nextcloud &
+exec xrdb -merge .Xresources &
+exec copyq &
+exec kdeconnect-indicator &
+exec blueman-applet &
+exec birdtray &
+exec echo 'exit' | qalc -e &
+
+if [[ `pidof xfce-polkit | wc -c` -eq 0 ]]; then
+    exec /usr/libexec/xfce-polkit &
+fi
+
+if [[ `pidof keepassxc | wc -c` -eq 0 ]]; then
+    exec keepassxc &
+fi
+
+if [[ `pidof Discord | wc -c` -eq 0 ]]; then
+    exec /usr/lib/discord/Discord --start-minimized &
+fi
+
+if [[ `pidof syncthing | wc -c` -eq 0 ]]; then
+    exec syncthing --no-browser &
+fi
+
+if [[ `pidof pipewire | wc -c` -eq 0 ]]; then
+    exec pipewire &
+fi
+
+if [[ `pgrep -f solaar | wc -c` -eq 0 ]]; then
+    exec solaar -w hide -b regular &
+fi

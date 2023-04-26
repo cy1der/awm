@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+export SUDO_ASKPASS="$HOME"/.config/awesome/rofi/bin/askpass
+sudo -A $1

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+amixer get Capture | grep '\[on\]' &>/dev/null
+if [[ "$?" == 0 ]]; then
+    amixer sset Capture toggle
+    notify-send --urgency=low "Microphone Off"
+else
+    amixer sset Capture toggle
+    notify-send --urgency=low "Microphone On"
+fi

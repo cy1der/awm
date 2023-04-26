@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+
+ddir="$HOME/.config/awesome/rofi/dialogs"
+rofi_command="rofi -theme $HOME/.config/awesome/rofi/powermenu.rasi"
+uptime=$(uptime -p | sed -e 's/up //g')
+
+shutdown=" Shutdown"
+reboot=" Restart"
+lock=" Lock"
+sleep="⏾ Sleep"
+logout=" Logout"
+
+rdialog () {
+    rofi -dmenu\
+    -i\
+    -no-fixed-num-lines\
+    -p "Are you sure? : "\
+    -theme "$ddir/confirm.rasi"
+}
+
+show_msg() {
+    rofi -theme "$ddir/askpass.rasi" -e "Options : yes / no / y / n"
+}
+
+options="$lock\n$sleep\n$logout\n$reboot\n$shutdown"
+
+chosen="$(echo -e "$options" | $rofi_command -p "UP - $uptime" -dmenu -selected-row 0)"
+case $chosen in
+    $shutdown)
+        ans=$(rdialog &)
+        if [[ $ans == "yes" ]] || [[ $ans == "YES" ]] || [[ $ans == "y" ]]; then
+            loginctl poweroff
+            elif [[ $ans == "no" ]] || [[ $ans == "NO" ]] || [[ $ans == "n" ]]; then
+            exit
+        else
+            show_msg
+        fi
+    ;;
+    $reboot)
+        ans=$(rdialog &)
+        if [[ $ans == "yes" ]] || [[ $ans == "YES" ]] || [[ $ans == "y" ]]; then
+            loginctl reboot
+            elif [[ $ans == "no" ]] || [[ $ans == "NO" ]] || [[ $ans == "n" ]]; then
+            exit
+        else
+            show_msg
+        fi
+    ;;
+    $lock)
+        env XSECURELOCK_NO_COMPOSITE=1 xsecurelock
+    ;;
+    $sleep)
+        ans=$(rdialog &)
+        if [[ $ans == "yes" ]] || [[ $ans == "YES" ]] || [[ $ans == "y" ]]; then
+            playerctl pause
+            amixer sset Master mute
+            loginctl suspend
+            elif [[ $ans == "no" ]] || [[ $ans == "NO" ]] || [[ $ans == "n" ]]; then
+            exit
+        else
+            show_msg
+        fi
+    ;;
+    $logout)
+        ans=$(rdialog &)
+        if [[ $ans == "yes" ]] || [[ $ans == "YES" ]] || [[ $ans == "y" ]]; then
+            awesome-client "awesome.quit()"
+            elif [[ $ans == "no" ]] || [[ $ans == "NO" ]] || [[ $ans == "n" ]]; then
+            exit
+        else
+            show_msg
+        fi
+    ;;
+esac
