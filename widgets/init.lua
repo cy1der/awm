@@ -14,9 +14,10 @@ _M.awesomemenu = {
     {
         'Hotkeys',
         function() hotkeys_popup.show_help(nil, awful.screen.focused()) end
-    }, {'Manual', apps.manual_cmd},
-    {'Configuation', apps.editor_cmd .. ' ' .. "~/.config/awesome/"},
-    {'Restart', function() awesome.restart() end},
+    }, {'Manual', apps.manual_cmd}, {
+        'Configuation', apps.editor_cmd .. ' ' ..
+            string.format("%s/.config/awesome/", os.getenv("HOME"))
+    }, {'Restart', function() awesome.restart() end},
     {'Quit', function() awesome.quit() end}
 }
 

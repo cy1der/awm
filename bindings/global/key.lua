@@ -243,6 +243,14 @@ awful.keyboard.append_global_keybindings {
         on_press = function()
             awful.util.spawn_with_shell('blueman-manager')
         end
+    }, awful.key {
+        modifiers = {},
+        key = "XF86Tools",
+        description = "open settings manager",
+        group = "system",
+        on_press = function()
+            awful.util.spawn_with_shell('xfce4-settings-manager')
+        end
     }
 }
 
@@ -361,27 +369,15 @@ awful.keyboard.append_global_keybindings {
         group = 'layout',
         on_press = function() awful.tag.incmwfact(-0.05) end
     }, awful.key {
-        modifiers = {mod.super, mod.shift},
+        modifiers = {mod.super, mod.ctrl},
         key = 'h',
         description = 'increase the number of master clients',
         group = 'layout',
         on_press = function() awful.tag.incnmaster(1, nil, true) end
     }, awful.key {
-        modifiers = {mod.super, mod.shift},
+        modifiers = {mod.super, mod.ctrl},
         key = 'l',
         description = 'decrease the number of master clients',
-        group = 'layout',
-        on_press = function() awful.tag.incnmaster(-1, nil, true) end
-    }, awful.key {
-        modifiers = {mod.super, mod.ctrl},
-        key = 'h',
-        description = 'increase the number of columns',
-        group = 'layout',
-        on_press = function() awful.tag.incnmaster(1, nil, true) end
-    }, awful.key {
-        modifiers = {mod.super, mod.ctrl},
-        key = 'l',
-        description = 'decrease the number of columns',
         group = 'layout',
         on_press = function() awful.tag.incnmaster(-1, nil, true) end
     }, awful.key {
