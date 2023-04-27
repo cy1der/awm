@@ -357,14 +357,14 @@ awful.keyboard.append_global_keybindings {
         group = 'client',
         on_press = awful.client.urgent.jumpto
     }, awful.key {
-        modifiers = {mod.super},
-        key = 'l',
+        modifiers = {mod.super, mod.ctrl},
+        key = 'Right',
         description = 'increase master width factor',
         group = 'layout',
         on_press = function() awful.tag.incmwfact(0.05) end
     }, awful.key {
-        modifiers = {mod.super},
-        key = 'h',
+        modifiers = {mod.super, mod.ctrl},
+        key = 'Left',
         description = 'decrease master width factor',
         group = 'layout',
         on_press = function() awful.tag.incmwfact(-0.05) end
