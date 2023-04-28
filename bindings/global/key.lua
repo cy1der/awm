@@ -407,16 +407,6 @@ awful.keyboard.append_global_keybindings {
             if tag then tag:view_only(tag) end
         end
     }, awful.key {
-        modifiers = {mod.super, mod.ctrl},
-        keygroup = 'numrow',
-        description = 'toggle tag',
-        group = 'tag',
-        on_press = function(index)
-            local screen = awful.screen.focused()
-            local tag = screen.tags[index]
-            if tag then tag:viewtoggle(tag) end
-        end
-    }, awful.key {
         modifiers = {mod.super, mod.shift},
         keygroup = 'numrow',
         description = 'move focused client to tag',

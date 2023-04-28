@@ -27,14 +27,14 @@ naughty.connect_signal("request::display", function(n)
             fill_space = true,
             {
                 widget = wibox.widget.textbox,
-                font = "NotoSans Nerd Font Bold 12",
+                font = "CaskaydiaCoveNerd Font SemiBold 12",
                 ellipsize = "end",
                 valign = "center",
                 markup = html_entities.decode(n.title)
             },
             {
                 widget = wibox.widget.textbox,
-                font = "NotoSans Nerd Font Regular 12",
+                font = "CaskaydiaCoveNerd Font SemiLight 12",
                 ellipsize = "end",
                 valign = "center",
                 markup = html_entities.decode(n.message)
@@ -54,8 +54,8 @@ naughty.connect_signal("request::display", function(n)
                 valign = "center",
                 {
                     widget = wibox.container.constraint,
-                    width = dpi(192),
-                    height = dpi(192),
+                    width = dpi(256),
+                    height = dpi(256),
                     strategy = "max",
                     {
                         widget = naughty.widget.icon,
@@ -77,14 +77,14 @@ naughty.connect_signal("request::display", function(n)
                     spacing = dpi(8),
                     {
                         widget = wibox.widget.textbox,
-                        font = "NotoSans Nerd Font Bold 12",
+                        font = "CaskaydiaCoveNerd Font SemiBold 12",
                         ellipsize = "end",
                         valign = "center",
                         markup = html_entities.decode(n.title)
                     },
                     {
                         widget = wibox.widget.textbox,
-                        font = "NotoSans Nerd Font Regular 12",
+                        font = "CaskaydiaCoveNerd Font SemiLight 12",
                         ellipsize = "end",
                         valign = "center",
                         markup = html_entities.decode(n.message)

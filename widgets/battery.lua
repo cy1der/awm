@@ -9,7 +9,7 @@ local HOME = os.getenv("HOME")
 
 local battery_widget = {}
 local function worker()
-    local font = "NotoSans Nerd Font Regular 12"
+    local font = "CaskaydiaCoveNerd Font SemiLight 12"
     local path_to_icons = HOME ..
                               "/.config/awesome/theme/icons/widgets/battery/"
     local show_current_level = true

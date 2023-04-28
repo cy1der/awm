@@ -39,7 +39,7 @@ textbox-prompt-colon {
     background-color:               @BG;
     text-color:                     @FG;
     padding:                        6px 2px 6px 12px;
-	font:							"NotoSans Nerd Font 15";
+	font:							"CaskaydiaCove Nerd Font SemiLight 15";
 }
 
 entry {

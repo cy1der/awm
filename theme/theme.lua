@@ -5,9 +5,9 @@ local dpi = require("beautiful.xresources").apply_dpi
 local theme = {}
 
 theme.wallpaper = themes_path .. "background.jpg"
-theme.font = "NotoSans Nerd Font Regular 12"
-theme.notification_font = "NotoSans Nerd Font Regular 12"
-theme.taglist_font = "NotoSans Nerd Font Regular 16"
+theme.font = "CaskaydiaCoveNerd Font SemiLight 12"
+theme.notification_font = "CaskaydiaCoveNerd Font SemiLight 12"
+theme.taglist_font = "CaskaydiaCoveNerd Font SemiLight 16"
 theme.notification_spacing = dpi(8)
 theme.fg_normal = "#000000"
 theme.fg_focus = "#FFFFFF"
