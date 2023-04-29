@@ -5,7 +5,7 @@
 
 wireless_interface="wlp0s20f3" # ! Change this accordingly
 
-scanned_networks=$(nmcli --fields SSID,BARS device wifi list | tail -n +2 | grep -v -- -- | awk -F '  +' '{ if (!seen[$1]++) print}' | sed 's/\(.*\)▂▄▆█/\1'󰤨'/' | sed 's/\(.*\)▂▄▆_/\1'󰤥'/' | sed 's/\(.*\)▂▄__/\1'󰤢'/' | sed 's/\(.*\)▂___/\1'󰤟'/' | sed 's/\(.*\)____/\1'󰤯'/')
+scanned_networks=$(nmcli --fields SSID,BARS device wifi list ifname $wireless_interface | tail -n +2 | grep -v -- -- | awk -F '  +' '{ if (!seen[$1]++) print}' | sed -E 's/▂▄▆█|\*\*\*\*/󰤨/g' | sed -E 's/▂▄▆_|\*\*\*/󰤥/g' | sed -E 's/▂▄__|\*\*/󰤢/g' | sed -E 's/▂___|\*/󰤟/g' | sed 's/____/󰤯/g')
 connectivity="$(nmcli radio wifi)"
 
 function get_wireless_state() {
@@ -63,14 +63,14 @@ function wireless_disconnect() {
 
 function refresh_options() {
     get_wireless_state
-    options="$([[ "$connectivity" = "disabled" ]] && echo "WiFi is disabled" || echo -e "Scanned Networks\n$scanned_networks\n\nRe-scan Networks\nShare WiFi Connection\nSaved Connections\nDelete Saved Connection\nRestart WiFi" )\n$([[ "$connectivity" = "disabled" ]] && echo "Enable" || echo "Disable" ) WiFi"
+    options="$([[ "$connectivity" = "disabled" ]] && echo "WiFi is disabled" || echo -e "Currently connected to $wireless_current_ssid\n\nScanned Networks\n$scanned_networks\n\nRe-scan Networks\nShare WiFi Connection\nSaved Connections\nDelete Saved Connection\nRestart WiFi" )\n$([[ "$connectivity" = "disabled" ]] && echo "Enable" || echo "Disable" ) WiFi"
 }
 
 function handle_selection() {
     case "$1" in
         "Re-scan Networks")
             notify-send "Scanning..." --urgency=low
-            scanned_networks=$(nmcli --fields SSID,BARS device wifi list ifname $wireless_interface --rescan yes | tail -n +2 | grep -v -- -- | awk -F '  +' '{ if (!seen[$1]++) print}' | sed 's/\(.*\)▂▄▆█/\1'󰤨'/' | sed 's/\(.*\)▂▄▆_/\1'󰤥'/' | sed 's/\(.*\)▂▄__/\1'󰤢'/' | sed 's/\(.*\)▂___/\1'󰤟'/' | sed 's/\(.*\)____/\1'󰤯'/')
+            scanned_networks=$(nmcli --fields SSID,BARS device wifi list ifname $wireless_interface --rescan yes | tail -n +2 | grep -v -- -- | awk -F '  +' '{ if (!seen[$1]++) print}' | sed -E 's/▂▄▆█|\*\*\*\*/󰤨/g' | sed -E 's/▂▄▆_|\*\*\*/󰤥/g' | sed -E 's/▂▄__|\*\*/󰤢/g' | sed -E 's/▂___|\*/󰤟/g' | sed 's/____/󰤯/g')
             refresh_options
             menu
         ;;
