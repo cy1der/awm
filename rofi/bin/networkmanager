@@ -11,7 +11,7 @@ connectivity="$(nmcli radio wifi)"
 function get_wireless_state() {
     connectivity="$(nmcli radio wifi)"
     wireless_state="$(nmcli device status | grep "^$wireless_interface" | awk '{print $3}')"
-    wireless_current_ssid=$(nmcli device status | grep "^$wireless_interface" | awk '{print $4}')
+    wireless_current_ssid=$(nmcli device status | grep "^$wireless_interface" | awk -F ' {2,}' '{print $4}')
 }
 
 function wireless_connect() {
@@ -81,7 +81,7 @@ function handle_selection() {
         ;;
         "Saved Connections")
             local options="$(nmcli --fields NAME connection show | tail -n +2)\n\nBack"
-            local selection="$(echo -e "$options" | rofi -dmenu -i -p " Saved" | awk '{print $1}')"
+            local selection="$(echo -e "$options" | rofi -dmenu -i -p " Saved" | awk '{$1=$1};1')"
             if [ "$selection" = "Back" ]; then
                 refresh_options
                 menu
@@ -91,7 +91,7 @@ function handle_selection() {
         ;;
         "Delete Saved Connection")
             local options="$(nmcli --fields NAME connection show | tail -n +2)\n\nBack"
-            local selection="$(echo -e "$options" | rofi -dmenu -i -p "󰗨 Delete" | awk '{print $1}')"
+            local selection="$(echo -e "$options" | rofi -dmenu -i -p "󰗨 Delete" | awk '{$1=$1};1')"
             if [ "$selection" = "Back" ]; then
                 refresh_options
                 menu
@@ -120,9 +120,7 @@ function handle_selection() {
         *)
             if [ -n "$1" ]; then
                 if [[ "$scanned_networks" == *"$1"* ]]; then
-                    local ssid=$(echo "$1" | awk '{print $1}')
-                    
-                    [ "$ssid" = "*" ] && ssid=$(echo "$1" | awk '{print $2}')
+                    local ssid=$(echo "$1" | awk -F ' {2,}' '{print $1}')
                     ([ "$ssid" = "$wireless_current_ssid" ] && wireless_disconnect) || wireless_connect "$ssid"
                 fi
             fi
