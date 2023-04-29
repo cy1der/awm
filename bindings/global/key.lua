@@ -95,7 +95,8 @@ awful.keyboard.append_global_keybindings {
         description = "open network menu",
         group = "rofi",
         on_press = function()
-            awful.util.spawn_with_shell('networkmanager_dmenu')
+            awful.util.spawn_with_shell(
+                '~/.config/awesome/rofi/bin/networkmanager')
         end
     }, awful.key {
         modifiers = {mod.super},

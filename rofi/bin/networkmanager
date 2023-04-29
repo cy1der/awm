@@ -1,0 +1,138 @@
+#!/bin/bash
+
+# If you want to use dmenu instead, replace all occurences of "rofi -dmenu" with "dmenu", this might break the qr code sharing however
+# qrencode is required for the WiFi sharing functionality
+
+wireless_interface="wlp0s20f3" # ! Change this accordingly
+
+scanned_networks=$(nmcli --fields SSID,BARS device wifi list | tail -n +2 | grep -v -- -- | awk -F '  +' '{ if (!seen[$1]++) print}' | sed 's/\(.*\)▂▄▆█/\1'󰤨'/' | sed 's/\(.*\)▂▄▆_/\1'󰤥'/' | sed 's/\(.*\)▂▄__/\1'󰤢'/' | sed 's/\(.*\)▂___/\1'󰤟'/' | sed 's/\(.*\)____/\1'󰤯'/')
+connectivity="$(nmcli radio wifi)"
+
+function get_wireless_state() {
+    connectivity="$(nmcli radio wifi)"
+    wireless_state="$(nmcli device status | grep "^$wireless_interface" | awk '{print $3}')"
+    wireless_current_ssid=$(nmcli device status | grep "^$wireless_interface" | awk '{print $4}')
+}
+
+function wireless_connect() {
+    get_wireless_state
+    
+    if [ "$wireless_state" = "unavailable" ]; then
+        notify-send "Error" "Interface \"$wireless_interface\" is unavailable" --urgency=critical
+    else
+        local ssid=$1
+        local saved_networks="$(nmcli --fields NAME connection show | tail -n +2)"
+        
+        if [ "$(echo "$saved_networks" | grep -c "$ssid")" = "1" ]; then
+            local command="nmcli connection up $ssid"
+        else
+            local pass=$(rofi -dmenu -password -p "Password")
+            local command="nmcli device wifi connect $ssid password $pass ifname $wireless_interface"
+        fi
+        
+        local attempt_result=$($command) 2>&1
+        
+        if [ "$(grep -c "successfully activated" <<< "$attempt_result")" = "1" ]; then
+            notify-send "Success" "Connected to \"$ssid\"" --urgency=low
+            elif [ "$(grep -c "Secrets were required\|Passwords or encryption keys" <<< "$attempt_result")" = "1" ]; then
+            notify-send "Error" "Incorrect password for \"$ssid\"" --urgency=critical
+            menu
+        else
+            notify-send "Error" "Connection attempt to \"$ssid\" failed" --urgency=critical
+        fi
+    fi
+}
+
+function wireless_disconnect() {
+    get_wireless_state
+    
+    if [ "$wireless_state" = "unavailable" ]; then
+        notify-send "Error" "Interface \"$wireless_interface\" is unavailable" --urgency=critical
+        elif [ "$wireless_state" = "disconnected" ]; then
+        notify-send "Error" "Already disconnected"
+    else
+        local attempt_result="$(nmcli connection down "$wireless_current_ssid" 2>&1)"
+        
+        if [ "$(grep -c "successfully deactivated" <<< "$attempt_result")" = "1" ]; then
+            notify-send "Success" "Disconnected from \"$wireless_current_ssid\"" --urgency=low
+        else
+            notify-send "Error" "Disconnection attempt from \"$wireless_current_ssid\" failed" --urgency=critical
+        fi
+    fi
+}
+
+function refresh_options() {
+    get_wireless_state
+    options="$([[ "$connectivity" = "disabled" ]] && echo "WiFi is disabled" || echo -e "Scanned Networks\n$scanned_networks\n\nRe-scan Networks\nShare WiFi Connection\nSaved Connections\nDelete Saved Connection\nRestart WiFi" )\n$([[ "$connectivity" = "disabled" ]] && echo "Enable" || echo "Disable" ) WiFi"
+}
+
+function handle_selection() {
+    case "$1" in
+        "Re-scan Networks")
+            notify-send "Scanning..." --urgency=low
+            scanned_networks=$(nmcli --fields SSID,BARS device wifi list ifname $wireless_interface --rescan yes | tail -n +2 | grep -v -- -- | awk -F '  +' '{ if (!seen[$1]++) print}' | sed 's/\(.*\)▂▄▆█/\1'󰤨'/' | sed 's/\(.*\)▂▄▆_/\1'󰤥'/' | sed 's/\(.*\)▂▄__/\1'󰤢'/' | sed 's/\(.*\)▂___/\1'󰤟'/' | sed 's/\(.*\)____/\1'󰤯'/')
+            refresh_options
+            menu
+        ;;
+        "Enable WiFi" | "Disable WiFi")
+            ([[ "$connectivity" = "disabled" ]] && nmcli radio wifi on) || nmcli radio wifi off
+            get_wireless_state
+            notify-send "Successfully $connectivity WiFi" --urgency=low
+        ;;
+        "Saved Connections")
+            local options="$(nmcli --fields NAME connection show | tail -n +2)\n\nBack"
+            local selection="$(echo -e "$options" | rofi -dmenu -i -p " Saved" | awk '{print $1}')"
+            if [ "$selection" = "Back" ]; then
+                refresh_options
+                menu
+                elif [ "$selection" != "" ]; then
+                wireless_connect "$selection"
+            fi
+        ;;
+        "Delete Saved Connection")
+            local options="$(nmcli --fields NAME connection show | tail -n +2)\n\nBack"
+            local selection="$(echo -e "$options" | rofi -dmenu -i -p "󰗨 Delete" | awk '{print $1}')"
+            if [ "$selection" = "Back" ]; then
+                refresh_options
+                menu
+                elif [ "$selection" != "" ]; then
+                ([[ "$(nmcli connection delete "$selection" | grep -c "successfully deleted")" = "1" ]] && notify-send "Success" "Deleted saved connection \"$selection\"" --urgency=low) || notify-send "Error" "Attempt to delete saved connection \"$selection\" failed" --urgency=critical
+            fi
+        ;;
+        "Restart WiFi")
+            nmcli radio wifi off && sleep 3 && nmcli radio wifi on
+            menu
+        ;;
+        "Share WiFi Connection")
+            local raw="$(nmcli device wifi show-password ifname "$wireless_interface")"
+            local information="$(echo -e "$raw" | head -3)\n\nShow QR Code\n\nBack"
+            local selection="$(echo -e "$information" | rofi -dmenu -p " Share")"
+            if [ "$selection" = "Back" ]; then
+                refresh_options
+                menu
+                elif [ "$selection" = "Show QR Code" ]; then
+                # Change the height and width to match your theme's font size, these parameters are for my rofi theme (https://github.com/cy1der/awm/blob/main/rofi/theme.rasi)
+                local window_height="130mm"
+                local window_width="125mm"
+                qrencode --type=UTF8 --output=- --margin=2 "WIFI:T:$(echo "$raw" | grep -oP '(?<=Security: ).*' | head -1);S:$(echo "$raw" | grep -oP '(?<=SSID: ).*' | head -1);P:$(echo "$raw" | grep -oP '(?<=Password: ).*' | head -1);;" | rofi -dmenu -p " Share" -theme-str "entry{enabled:false;}window{padding:0;width:$window_width;height:$window_height;}listview{scrollbar:false;spacing:0px;}element{padding:0px;}element selected.normal{border:0px;}"
+            fi
+        ;;
+        *)
+            if [ -n "$1" ]; then
+                if [[ "$scanned_networks" == *"$1"* ]]; then
+                    local ssid=$(echo "$1" | awk '{print $1}')
+                    
+                    [ "$ssid" = "*" ] && ssid=$(echo "$1" | awk '{print $2}')
+                    ([ "$ssid" = "$wireless_current_ssid" ] && wireless_disconnect) || wireless_connect "$ssid"
+                fi
+            fi
+        ;;
+    esac
+}
+
+function menu() {
+    refresh_options
+    handle_selection "$(echo -e "$options" | rofi -dmenu -i -p "󰤨 Networks")"
+}
+
+menu

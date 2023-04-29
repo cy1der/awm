@@ -94,6 +94,7 @@ element {
     border: 						0px;
     padding: 						6px;
 }
+
 element normal.normal {
     background-color: 				@BG;
     text-color:       				@FG;
@@ -112,6 +113,7 @@ element selected.normal {
     border: 						1px;
     border-color: 					@SEL;
 }
+
 element selected.urgent {
     background-color: 				@BG;
     text-color:       				@UGT;

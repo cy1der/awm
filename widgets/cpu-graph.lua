@@ -9,9 +9,6 @@ local CMD =
     [[sh -c "grep '^cpu.' /proc/stat; ps -eo '%p|%c|%C|' -o "%mem" -o '|%a' --sort=-%cpu ]] ..
         [[| head -11 | tail -n +2"]]
 
-local CMD_TEMP =
-    [[awk '{ printf "%.f\n",  $0 / 1000.0 }' /sys/class/thermal/thermal_zone*/temp]]
-
 local CMD_slim = [[grep --max-count=1 '^cpu.' /proc/stat]]
 
 local HOME_DIR = os.getenv("HOME")
