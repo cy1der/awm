@@ -5,7 +5,7 @@
 
 wireless_interface="wlp0s20f3" # ! Change this accordingly
 
-scanned_networks=$(nmcli --fields SSID,BARS device wifi list ifname $wireless_interface | tail -n +2 | grep -v -- -- | awk -F '  +' '{ if (!seen[$1]++) print}' | sed -E 's/▂▄▆█|\*\*\*\*/󰤨/g' | sed -E 's/▂▄▆_|\*\*\*/󰤥/g' | sed -E 's/▂▄__|\*\*/󰤢/g' | sed -E 's/▂___|\*/󰤟/g' | sed 's/____/󰤯/g')
+scanned_networks=$(nmcli --fields SSID,SECURITY,BARS device wifi list ifname $wireless_interface | tail -n +2 | grep -v -- -- | awk -F '  +' '{ if (!seen[$1]++) print}' | sed -E 's/▂▄▆█|\*\*\*\*/󰤨/g' | sed -E 's/▂▄▆_|\*\*\*/󰤥/g' | sed -E 's/▂▄__|\*\*/󰤢/g' | sed -E 's/▂___|\*/󰤟/g' | sed 's/____/󰤯/g')
 connectivity="$(nmcli radio wifi)"
 
 function get_wireless_state() {
@@ -70,7 +70,7 @@ function handle_selection() {
     case "$1" in
         "Re-scan Networks")
             notify-send "Scanning..." --urgency=low
-            scanned_networks=$(nmcli --fields SSID,BARS device wifi list ifname $wireless_interface --rescan yes | tail -n +2 | grep -v -- -- | awk -F '  +' '{ if (!seen[$1]++) print}' | sed -E 's/▂▄▆█|\*\*\*\*/󰤨/g' | sed -E 's/▂▄▆_|\*\*\*/󰤥/g' | sed -E 's/▂▄__|\*\*/󰤢/g' | sed -E 's/▂___|\*/󰤟/g' | sed 's/____/󰤯/g')
+            scanned_networks=$(nmcli --fields SSID,SECURITY,BARS device wifi list ifname $wireless_interface --rescan yes | tail -n +2 | grep -v -- -- | awk -F '  +' '{ if (!seen[$1]++) print}' | sed -E 's/▂▄▆█|\*\*\*\*/󰤨/g' | sed -E 's/▂▄▆_|\*\*\*/󰤥/g' | sed -E 's/▂▄__|\*\*/󰤢/g' | sed -E 's/▂___|\*/󰤟/g' | sed 's/____/󰤯/g')
             refresh_options
             menu
         ;;

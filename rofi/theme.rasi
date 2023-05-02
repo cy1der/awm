@@ -11,7 +11,7 @@ configuration {
     display-ssh: 					" SSH";
     display-drun: 					"󰣆 Apps";
     display-emoji:                  " Emoji";
-    display-filebrowser:            " Files";
+    display-file-browser-extended:  " Files";
     display-calc:                   "󰃬 Calc";
 }
 

@@ -54,20 +54,18 @@ local function worker(user_args)
 
                 local levelnum = tonumber(level)
 
-                if (levelnum >= 1 and levelnum < 14) then
+                if (levelnum >= 0 and levelnum <= 17) then
                     iconLevel = "1"
-                elseif (levelnum >= 14 and levelnum < 28) then
+                elseif (levelnum >= 18 and levelnum <= 34) then
                     iconLevel = "2"
-                elseif (levelnum >= 28 and levelnum < 42) then
+                elseif (levelnum >= 35 and levelnum <= 50) then
                     iconLevel = "3"
-                elseif (levelnum >= 42 and levelnum < 56) then
+                elseif (levelnum >= 51 and levelnum <= 67) then
                     iconLevel = "4"
-                elseif (levelnum >= 56 and levelnum < 70) then
+                elseif (levelnum >= 68 and levelnum <= 85) then
                     iconLevel = "5"
-                elseif (levelnum >= 70 and levelnum < 84) then
-                    iconLevel = "6"
                 else
-                    iconLevel = "7"
+                    iconLevel = "6"
                 end
 
                 self:get_children_by_id('icon')[1]:set_image(path_to_icon ..

@@ -1,6 +1,5 @@
 local awful = require 'awful'
 local hotkeys_popup = require 'awful.hotkeys_popup'
-require 'awful.hotkeys_popup.keys'
 local menubar = require 'menubar'
 
 local apps = require 'config.apps'
@@ -128,7 +127,8 @@ awful.keyboard.append_global_keybindings {
         description = "open file manager",
         group = "rofi",
         on_press = function()
-            awful.util.spawn_with_shell('rofi -show filebrowser')
+            awful.util.spawn_with_shell(
+                'rofi -show file-browser-extended -file-browser-show-hidden')
         end
     }, awful.key {
         modifiers = {mod.ctrl, mod.alt},
