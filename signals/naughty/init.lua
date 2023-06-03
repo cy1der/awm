@@ -17,7 +17,7 @@ naughty.connect_signal("request::display", function(n)
     global_state.cache.notifications_update(n)
 
     local border_color = "#FFFFFF"
-    local timeout = 5
+    local timeout = 10
     local notification_widget_no_icon = {
         margins = dpi(12),
         widget = wibox.container.margin,
@@ -125,7 +125,7 @@ naughty.connect_signal("request::display", function(n)
         n.timeout = timeout
         naughty.layout.box {
             notification = n,
-            maximum_height = dpi(288),
+            maximum_height = dpi(256),
             ontop = true,
             position = "top_right",
             bg = "#000000",

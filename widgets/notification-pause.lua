@@ -6,20 +6,16 @@ local HOME = os.getenv("HOME")
 local path_to_icons = HOME ..
                           "/.config/awesome/theme/icons/widgets/notifications/"
 
+local on = path_to_icons .. "on.png"
+local off = path_to_icons .. "off.png"
+local s = true
+
 local dnd = wibox.widget {
-    {
-        id = "icon",
-        widget = wibox.widget.imagebox,
-        image = path_to_icons .. "on.png",
-        resize = true
-    },
+    {id = "icon", widget = wibox.widget.imagebox, image = on, resize = true},
     valign = "center",
     layout = wibox.container.place
 }
 
-local on = path_to_icons .. "on.png"
-local off = path_to_icons .. "off.png"
-local s = true
 dnd:buttons{
     awful.button({}, 1, function()
         s = not s

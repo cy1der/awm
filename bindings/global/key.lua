@@ -44,9 +44,7 @@ awful.keyboard.append_global_keybindings {
         key = "d",
         description = "open Discord",
         group = "applications",
-        on_press = function()
-            awful.util.spawn_with_shell("/usr/lib/discord/Discord")
-        end
+        on_press = function() awful.util.spawn_with_shell("Discord") end
     }, awful.key {
         modifiers = {mod.super},
         key = "p",
@@ -59,7 +57,7 @@ awful.keyboard.append_global_keybindings {
         description = "open Obsidian",
         group = "applications",
         on_press = function()
-            awful.util.spawn_with_shell("/opt/obsidian/obsidian")
+            awful.util.spawn_with_shell("/opt/Obsidian/obsidian")
         end
     }, awful.key {
         modifiers = {mod.super},
@@ -173,38 +171,6 @@ awful.keyboard.append_global_keybindings {
         on_press = function()
             awful.util.spawn_with_shell(
                 "env XSECURELOCK_NO_COMPOSITE=1 xsecurelock")
-        end
-    }, awful.key {
-        modifiers = {},
-        key = "XF86AudioMute",
-        description = "toggle mute audio",
-        group = "system",
-        on_press = function()
-            awful.util.spawn_with_shell('amixer sset Master toggle')
-        end
-    }, awful.key {
-        modifiers = {},
-        key = "XF86AudioRaiseVolume",
-        description = "increase volume",
-        group = "system",
-        on_press = function()
-            awful.util.spawn_with_shell('amixer -Mq sset Master,0 5%+ unmute')
-        end
-    }, awful.key {
-        modifiers = {},
-        key = "XF86AudioLowerVolume",
-        description = "decrease volume",
-        group = "system",
-        on_press = function()
-            awful.util.spawn_with_shell('amixer -Mq sset Master,0 5%- unmute')
-        end
-    }, awful.key {
-        modifiers = {},
-        key = "XF86AudioMicMute",
-        description = "toggle mute microphone",
-        group = "system",
-        on_press = function()
-            awful.util.spawn_with_shell('~/.config/awesome/scripts/toggle-mic')
         end
     }, awful.key {
         modifiers = {},
@@ -396,6 +362,7 @@ awful.keyboard.append_global_keybindings {
     }
 }
 
+-- tag related keybindings
 awful.keyboard.append_global_keybindings {
     awful.key {
         modifiers = {mod.super},
@@ -437,6 +404,75 @@ awful.keyboard.append_global_keybindings {
         on_press = function(index)
             local tag = awful.screen.focused().selected_tag
             if tag then tag.layout = tag.layouts[index] or tag.layout end
+        end
+    }
+}
+
+-- player related bindings
+awful.keyboard.append_global_keybindings {
+    awful.key {
+        modifiers = {},
+        key = "XF86AudioMute",
+        description = "toggle mute audio",
+        group = "player",
+        on_press = function()
+            awful.util.spawn_with_shell('amixer sset Master toggle')
+        end
+    }, awful.key {
+        modifiers = {},
+        key = "XF86AudioRaiseVolume",
+        description = "increase volume",
+        group = "player",
+        on_press = function()
+            awful.util.spawn_with_shell('amixer -Mq sset Master,0 5%+ unmute')
+        end
+    }, awful.key {
+        modifiers = {},
+        key = "XF86AudioLowerVolume",
+        description = "decrease volume",
+        group = "player",
+        on_press = function()
+            awful.util.spawn_with_shell('amixer -Mq sset Master,0 5%- unmute')
+        end
+    }, awful.key {
+        modifiers = {},
+        key = "XF86AudioMicMute",
+        description = "toggle mute microphone",
+        group = "player",
+        on_press = function()
+            awful.util.spawn_with_shell('~/.config/awesome/scripts/toggle-mic')
+        end
+    }, awful.key {
+        modifiers = {},
+        key = "XF86AudioPlay",
+        description = "play",
+        group = "player",
+        on_press = function()
+            awful.util.spawn_with_shell('playerctl play')
+        end
+    }, awful.key {
+        modifiers = {},
+        key = "XF86AudioPause",
+        description = "pause",
+        group = "player",
+        on_press = function()
+            awful.util.spawn_with_shell('playerctl pause')
+        end
+    }, awful.key {
+        modifiers = {},
+        key = "XF86AudioNext",
+        description = "next track",
+        group = "player",
+        on_press = function()
+            awful.util.spawn_with_shell('playerctl next')
+        end
+    }, awful.key {
+        modifiers = {},
+        key = "XF86AudioPrev",
+        description = "previous track",
+        group = "player",
+        on_press = function()
+            awful.util.spawn_with_shell('playerctl previous')
         end
     }
 }

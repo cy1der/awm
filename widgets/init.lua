@@ -171,7 +171,6 @@ function _M.create_wibox(s)
         height = 48,
         border_width = dpi(2),
         border_color = "#FFFFFF",
-        margins = dpi(8),
         widget = {
             layout = wibox.layout.align.horizontal,
             -- left widgets
