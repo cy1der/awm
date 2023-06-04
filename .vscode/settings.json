@@ -1,0 +1,11 @@
+{
+  "Lua.diagnostics.globals": [
+    "client",
+    "screen",
+    "tag",
+    "mouse",
+    "awesome",
+    "keygrabber"
+  ],
+  "Lua.diagnostics.disable": ["different-requires"]
+}

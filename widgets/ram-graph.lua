@@ -1,8 +1,5 @@
-local awful = require("awful")
-local beautiful = require("beautiful")
 local watch = require("awful.widget.watch")
 local wibox = require("wibox")
-local dpi = require("beautiful.xresources").apply_dpi
 
 local ramgraph_widget = {}
 
@@ -24,18 +21,12 @@ local function worker()
         widget = wibox.widget.piechart
     }
 
-    local total, used, free, shared, buff_cache, available, total_swap,
-          used_swap, free_swap
-
-    local function getPercentage(value)
-        return math.floor(value / (total + total_swap) * 100 + 0.5) .. '%'
-    end
+    local total, used, free, buff_cache
 
     watch('bash -c "LANGUAGE=en_US.UTF-8 free | grep -z Mem.*Swap.*"', timeout,
           function(widget, stdout)
-        total, used, free, shared, buff_cache, available, total_swap, used_swap, free_swap =
-            stdout:match(
-                '(%d+)%s*(%d+)%s*(%d+)%s*(%d+)%s*(%d+)%s*(%d+)%s*Swap:%s*(%d+)%s*(%d+)%s*(%d+)')
+        total, used, free, buff_cache = stdout:match(
+                                            '(%d+)%s*(%d+)%s*(%d+)%s*(%d+)%s*(%d+)%s*(%d+)%s*Swap:%s*(%d+)%s*(%d+)%s*(%d+)')
 
         if widget_show_buf then
             widget.data = {used, free, buff_cache}
@@ -48,4 +39,4 @@ local function worker()
 end
 
 return setmetatable(ramgraph_widget,
-                    {__call = function(_, ...) return worker(...) end})
+                    {__call = function(_, ...) return worker() end})

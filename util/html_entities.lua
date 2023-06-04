@@ -1,3 +1,4 @@
+---@diagnostic disable: param-type-mismatch
 local error_msg_htmlEntities = false
 local debug_htmlEntities = false
 local ASCII_htmlEntities = true
@@ -2289,24 +2290,6 @@ local htmlEntities_table = {
     ['&#8482;'] = '™'
 }
 
-function htmlEntities.filter(input, table)
-    if not input then
-        if error_msg_htmlEntities then
-            error('htmlEntities[filter] >> ERROR: input is value nil')
-        end
-        return false
-    end
-    if not table then
-        if error_msg_htmlEntities then
-            error('htmlEntities[filter] >> ERROR: table is value nil')
-        end
-        return false
-    end
-    local output = input
-    for s, v in pairs(table) do output = output:gsub(s, v) end
-    return output
-end
-
 function htmlEntities.ASCII_HEX(input)
     if not input then
         if error_msg_htmlEntities then
@@ -2314,6 +2297,7 @@ function htmlEntities.ASCII_HEX(input)
         end
         return false
     end
+
     if math.abs(_VERSION:sub(-1)) >= 3 then
         return utf8.char(input)
     else
@@ -2366,38 +2350,6 @@ function htmlEntities.decode(input)
 
     if debug_htmlEntities then print('>>' .. output) end
     return output
-end
-
-function htmlEntities.encode(input)
-    if not input then
-        if error_msg_htmlEntities then
-            error('htmlEntities[encode] >> ERROR: input is value nil')
-        end
-        return false
-    end
-    input = htmlEntities.decode(input)
-    local output = input:gsub('([%z\1-\127\194-\244][\128-\191]*)',
-                              function(char)
-        local charbyte = char:byte()
-        if (string.len(char) == 1) then
-            if charbyte == 32 then return ' ' end
-            return '&#' .. charbyte .. ';'
-        else
-            return char
-        end
-    end)
-    if debug_htmlEntities then print('>>' .. output) end
-    return output
-end
-
-function string:htmlDecode(filter)
-    if not self then return false end
-    return htmlEntities.decode(self)
-end
-
-function string:htmlEncode(filter)
-    if not self then return false end
-    return htmlEntities.encode(self)
 end
 
 return htmlEntities

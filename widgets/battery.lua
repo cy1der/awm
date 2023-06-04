@@ -174,4 +174,4 @@ local function worker()
 end
 
 return setmetatable(battery_widget,
-                    {__call = function(_, ...) return worker(...) end})
+                    {__call = function(_, ...) return worker() end})

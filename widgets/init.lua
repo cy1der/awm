@@ -57,7 +57,7 @@ local wifi_color = wibox.container.background()
 wifi_color:set_widget(wifi_nocolor())
 wifi_color:set_fg("#FFFFFF")
 
-_M.notif_pause = require('widgets.notification-pause')
+_M.notif_pause = require('widgets.notification')
 _M.ram = require 'widgets.ram-graph'()
 _M.fs = require 'widgets.storage-bar'()
 _M.cpu = require 'widgets.cpu-graph'()

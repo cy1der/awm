@@ -4,13 +4,10 @@ local spawn = require("awful.spawn")
 local beautiful = require("beautiful")
 local watch = require("awful.widget.watch")
 
-local LIST_DEVICES_CMD = [[sh -c "pacmd list-sinks; pacmd list-sources"]]
-
 local function INC_VOLUME_CMD(step) return 'amixer sset Master ' .. step .. '%+' end
 local function DEC_VOLUME_CMD(step) return 'amixer sset Master ' .. step .. '%-' end
 
 local volume = {}
-local widget = {}
 local ICON_DIR = os.getenv("HOME") ..
                      '/.config/awesome/theme/icons/widgets/volume/'
 
@@ -103,4 +100,4 @@ local function worker()
     return volume.widget
 end
 
-return setmetatable(volume, {__call = function(_, ...) return worker(...) end})
+return setmetatable(volume, {__call = function(_, ...) return worker() end})

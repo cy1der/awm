@@ -52,6 +52,7 @@ local function getScreenId(output)
         os.execute("udevadm settle")
         local edid = io.open(output .. '/edid', 'rb')
         local id = edid:read('*all')
+
         io.close(edid)
         if emptyStr(id) then
             log('cannot read EDID from ' .. output .. '/edid')

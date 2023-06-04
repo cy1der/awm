@@ -1,10 +1,10 @@
 local awful = require 'awful'
 local hotkeys_popup = require 'awful.hotkeys_popup'
 local menubar = require 'menubar'
-
 local apps = require 'config.apps'
 local mod = require 'bindings.mod'
 local switcher = require 'modules.switcher'
+local HOME = os.getenv("HOME")
 
 menubar.utils.terminal = apps.terminal
 
@@ -38,33 +38,31 @@ awful.keyboard.append_global_keybindings {
         key = 'b',
         description = 'open browser',
         group = 'applications',
-        on_press = function() awful.util.spawn_with_shell('firefox') end
+        on_press = function() awful.spawn('firefox') end
     }, awful.key {
         modifiers = {mod.super},
         key = "d",
         description = "open Discord",
         group = "applications",
-        on_press = function() awful.util.spawn_with_shell("Discord") end
+        on_press = function() awful.spawn("Discord") end
     }, awful.key {
         modifiers = {mod.super},
         key = "p",
         description = "open file manager",
         group = "applications",
-        on_press = function() awful.util.spawn_with_shell("thunar") end
+        on_press = function() awful.spawn("thunar") end
     }, awful.key {
         modifiers = {mod.super},
         key = "l",
         description = "open Obsidian",
         group = "applications",
-        on_press = function()
-            awful.util.spawn_with_shell("/opt/Obsidian/obsidian")
-        end
+        on_press = function() awful.spawn("/opt/Obsidian/obsidian") end
     }, awful.key {
         modifiers = {mod.super},
         key = "v",
         description = "open CopyQ",
         group = "applications",
-        on_press = function() awful.util.spawn_with_shell("copyq toggle") end
+        on_press = function() awful.spawn("copyq toggle") end
     }
 }
 
@@ -76,56 +74,49 @@ awful.keyboard.append_global_keybindings {
         description = "open power menu",
         group = "rofi",
         on_press = function()
-            awful.util.spawn_with_shell('~/.config/awesome/rofi/bin/powermenu')
+            awful.spawn(string.format("%s/.config/awesome/rofi/bin/powermenu",
+                                      HOME))
         end
     }, awful.key {
         modifiers = {mod.super, mod.shift},
         key = 'c',
         description = "open calculator",
         group = "rofi",
-        on_press = function()
-            awful.util.spawn_with_shell('rofi -show calc -terse')
-        end
+        on_press = function() awful.spawn('rofi -show calc -terse') end
     }, awful.key {
         modifiers = {mod.super},
         key = 'z',
         description = "open network menu",
         group = "rofi",
         on_press = function()
-            awful.util.spawn_with_shell(
-                '~/.config/awesome/rofi/bin/networkmanager')
+            awful.spawn(string.format(
+                            "%s/.config/awesome/rofi/bin/networkmanager", HOME))
         end
     }, awful.key {
         modifiers = {mod.super},
         key = 'r',
         description = "open app menu",
         group = "rofi",
-        on_press = function()
-            awful.util.spawn_with_shell('rofi -show drun')
-        end
+        on_press = function() awful.spawn('rofi -show drun') end
     }, awful.key {
         modifiers = {mod.super},
         key = 'period',
         description = "open emoji selector",
         group = "rofi",
-        on_press = function()
-            awful.util.spawn_with_shell('rofi -show emoji')
-        end
+        on_press = function() awful.spawn('rofi -show emoji') end
     }, awful.key {
         modifiers = {mod.super, mod.shift},
         key = 's',
         description = "open SSH menu",
         group = "rofi",
-        on_press = function()
-            awful.util.spawn_with_shell('rofi -show ssh')
-        end
+        on_press = function() awful.spawn('rofi -show ssh') end
     }, awful.key {
         modifiers = {mod.super, mod.shift},
         key = 'f',
         description = "open file manager",
         group = "rofi",
         on_press = function()
-            awful.util.spawn_with_shell(
+            awful.spawn(
                 'rofi -show file-browser-extended -file-browser-show-hidden')
         end
     }, awful.key {
@@ -133,9 +124,7 @@ awful.keyboard.append_global_keybindings {
         key = 'Tab',
         description = "open window switcher",
         group = "rofi",
-        on_press = function()
-            awful.util.spawn_with_shell('rofi -show window')
-        end
+        on_press = function() awful.spawn('rofi -show window') end
     }
 }
 
@@ -147,7 +136,8 @@ awful.keyboard.append_global_keybindings {
         description = "screenshot area",
         group = "screen",
         on_press = function()
-            awful.util.spawn_with_shell('~/.config/awesome/scripts/flameshot')
+            awful.spawn(string.format("%s/.config/awesome/scripts/flameshot",
+                                      HOME))
         end
     }, awful.key {
         modifiers = {mod.shift},
@@ -155,8 +145,8 @@ awful.keyboard.append_global_keybindings {
         description = "screenshot desktop",
         group = "screen",
         on_press = function()
-            awful.util.spawn_with_shell(
-                '~/.config/awesome/scripts/flameshot-full')
+            awful.spawn(string.format(
+                            "%s/.config/awesome/scripts/flameshot-full", HOME))
         end
     }
 }
@@ -169,55 +159,44 @@ awful.keyboard.append_global_keybindings {
         description = "lock screen",
         group = "system",
         on_press = function()
-            awful.util.spawn_with_shell(
-                "env XSECURELOCK_NO_COMPOSITE=1 xsecurelock")
+            awful.spawn("env XSECURELOCK_NO_COMPOSITE=1 xsecurelock")
         end
     }, awful.key {
         modifiers = {},
         key = "XF86MonBrightnessUp",
         description = "increase brightness",
         group = "system",
-        on_press = function()
-            awful.util.spawn_with_shell('brightnessctl set +5%')
-        end
+        on_press = function() awful.spawn('brightnessctl set +5%') end
     }, awful.key {
         modifiers = {},
         key = "XF86MonBrightnessDown",
         description = "decrease brightness",
         group = "system",
-        on_press = function()
-            awful.util.spawn_with_shell('brightnessctl set 5%-')
-        end
+        on_press = function() awful.spawn('brightnessctl set 5%-') end
     }, awful.key {
         modifiers = {},
         key = "XF86Display",
         description = "open display settings",
         group = "system",
-        on_press = function() awful.util.spawn_with_shell('arandr') end
+        on_press = function() awful.spawn('arandr') end
     }, awful.key {
         modifiers = {},
         key = "XF86WLAN",
         description = "open network manager",
         group = "system",
-        on_press = function()
-            awful.util.spawn_with_shell('alacritty -e "nmtui"')
-        end
+        on_press = function() awful.spawn('alacritty -e "nmtui"') end
     }, awful.key {
         modifiers = {},
         key = "XF86Bluetooth",
         description = "open bluetooth manager",
         group = "system",
-        on_press = function()
-            awful.util.spawn_with_shell('blueman-manager')
-        end
+        on_press = function() awful.spawn('blueman-manager') end
     }, awful.key {
         modifiers = {},
         key = "XF86Tools",
         description = "open settings manager",
         group = "system",
-        on_press = function()
-            awful.util.spawn_with_shell('xfce4-settings-manager')
-        end
+        on_press = function() awful.spawn('xfce4-settings-manager') end
     }
 }
 
@@ -415,16 +394,14 @@ awful.keyboard.append_global_keybindings {
         key = "XF86AudioMute",
         description = "toggle mute audio",
         group = "player",
-        on_press = function()
-            awful.util.spawn_with_shell('amixer sset Master toggle')
-        end
+        on_press = function() awful.spawn('amixer sset Master toggle') end
     }, awful.key {
         modifiers = {},
         key = "XF86AudioRaiseVolume",
         description = "increase volume",
         group = "player",
         on_press = function()
-            awful.util.spawn_with_shell('amixer -Mq sset Master,0 5%+ unmute')
+            awful.spawn('amixer -Mq sset Master,0 5%+ unmute')
         end
     }, awful.key {
         modifiers = {},
@@ -432,7 +409,7 @@ awful.keyboard.append_global_keybindings {
         description = "decrease volume",
         group = "player",
         on_press = function()
-            awful.util.spawn_with_shell('amixer -Mq sset Master,0 5%- unmute')
+            awful.spawn('amixer -Mq sset Master,0 5%- unmute')
         end
     }, awful.key {
         modifiers = {},
@@ -440,39 +417,32 @@ awful.keyboard.append_global_keybindings {
         description = "toggle mute microphone",
         group = "player",
         on_press = function()
-            awful.util.spawn_with_shell('~/.config/awesome/scripts/toggle-mic')
+            awful.spawn(string.format("%s/.config/awesome/scripts/toggle-mic",
+                                      HOME))
         end
     }, awful.key {
         modifiers = {},
         key = "XF86AudioPlay",
         description = "play",
         group = "player",
-        on_press = function()
-            awful.util.spawn_with_shell('playerctl play')
-        end
+        on_press = function() awful.spawn('playerctl play') end
     }, awful.key {
         modifiers = {},
         key = "XF86AudioPause",
         description = "pause",
         group = "player",
-        on_press = function()
-            awful.util.spawn_with_shell('playerctl pause')
-        end
+        on_press = function() awful.spawn('playerctl pause') end
     }, awful.key {
         modifiers = {},
         key = "XF86AudioNext",
         description = "next track",
         group = "player",
-        on_press = function()
-            awful.util.spawn_with_shell('playerctl next')
-        end
+        on_press = function() awful.spawn('playerctl next') end
     }, awful.key {
         modifiers = {},
         key = "XF86AudioPrev",
         description = "previous track",
         group = "player",
-        on_press = function()
-            awful.util.spawn_with_shell('playerctl previous')
-        end
+        on_press = function() awful.spawn('playerctl previous') end
     }
 }
