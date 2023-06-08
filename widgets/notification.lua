@@ -104,13 +104,13 @@ dnd:buttons{
             end
 
             list:connect_signal("button::press", function(_, _, _, button)
-                if button == 4 then -- up scrolling
+                if button == 5 then -- up scrolling
                     if pointer < #list.children and
                         ((#list.children - pointer) >= min_notifications) then
                         pointer = pointer + 1
                         list.children[pointer].visible = false
                     end
-                elseif button == 5 then -- down scrolling
+                elseif button == 4 then -- down scrolling
                     if pointer > 0 then
                         list.children[pointer].visible = true
                         pointer = pointer - 1
