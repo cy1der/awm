@@ -32,7 +32,7 @@ _M.launcher = awful.widget.launcher {
 
 _M.keyboardlayout = awful.widget.keyboardlayout()
 
-local textclock_nocolor = wibox.widget.textclock("%m/%d/%Y | %I:%M:%S %P", 1)
+local textclock_nocolor = wibox.widget.textclock("%m/%d/%Y | %I:%M:%S %P", 0.25)
 local textclock_color = wibox.container.background()
 textclock_color:set_widget(textclock_nocolor)
 textclock_color:set_fg("#FFFFFF")
