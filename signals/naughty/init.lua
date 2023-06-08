@@ -55,7 +55,8 @@ naughty.connect_signal("request::display", function(n)
                 font = "CaskaydiaCoveNerd Font Light 9",
                 ellipsize = "end",
                 valign = "center",
-                markup = n.get_app_name(n) .. " | " .. date
+                markup = (n.get_app_name(n) ~= "" and n.get_app_name(n) or
+                    "awesome" .. " | ") .. date
             },
             {
                 widget = wibox.widget.textbox,
