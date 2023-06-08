@@ -57,7 +57,7 @@ local wifi_color = wibox.container.background()
 wifi_color:set_widget(wifi_nocolor())
 wifi_color:set_fg("#FFFFFF")
 
-_M.notif_pause = require('widgets.notification')
+_M.notifs = require('widgets.notification')
 _M.ram = require 'widgets.ram-graph'()
 _M.fs = require 'widgets.storage-bar'()
 _M.cpu = require 'widgets.cpu-graph'()
@@ -164,7 +164,7 @@ function _M.create_tasklist(s)
     }
 end
 
-function _M.create_wibox(s)
+function _M.create_wibar(s)
     return awful.wibar {
         screen = s,
         position = 'top',
@@ -201,7 +201,7 @@ function _M.create_wibox(s)
                                        "#000000"),
                 wibox.container.margin(_M.battery, dpi(8), dpi(8), dpi(8),
                                        dpi(8), "#000000"),
-                wibox.container.margin(_M.notif_pause, dpi(4), dpi(4), dpi(10),
+                wibox.container.margin(_M.notifs, dpi(4), dpi(4), dpi(10),
                                        dpi(10), "#000000"),
                 wibox.container.margin(_M.textclock, dpi(8), dpi(12), 0, 0,
                                        "#000000")

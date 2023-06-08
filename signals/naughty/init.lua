@@ -14,10 +14,35 @@ naughty.connect_signal('request::display_error', function(message, startup)
 end)
 
 naughty.connect_signal("request::display", function(n)
-    global_state.cache.notifications_update(n)
+    local function getFormattedDateTime()
+        local currentTime = os.date("*t")
+        local year = currentTime.year
+        local month = currentTime.month
+        local day = currentTime.day
+        local hour = currentTime.hour
+        local minute = currentTime.min
+        local second = currentTime.sec
+
+        local period = "AM"
+        if hour >= 12 then period = "PM" end
+        if hour > 12 then hour = hour - 12 end
+
+        local formattedDate = string.format("%04d/%02d/%02d", year, month, day)
+        local formattedTime = string.format("%02d:%02d:%02d %s", hour, minute,
+                                            second, period)
+
+        local formattedDateTime = formattedDate .. " - " .. formattedTime
+        return formattedDateTime
+    end
+
+    local date = getFormattedDateTime()
+
+    if n.get_app_name(n) ~= "" then
+        global_state.cache.notifications_update(n, date)
+    end
 
     local border_color = "#FFFFFF"
-    local timeout = 10
+    local timeout = 7.5
     local notification_widget_no_icon = {
         margins = dpi(12),
         widget = wibox.container.margin,
@@ -25,6 +50,13 @@ naughty.connect_signal("request::display", function(n)
             layout = wibox.layout.fixed.vertical,
             spacing = dpi(8),
             fill_space = true,
+            {
+                widget = wibox.widget.textbox,
+                font = "CaskaydiaCoveNerd Font Light 9",
+                ellipsize = "end",
+                valign = "center",
+                markup = n.get_app_name(n) .. " | " .. date
+            },
             {
                 widget = wibox.widget.textbox,
                 font = "CaskaydiaCoveNerd Font SemiBold 12",
@@ -75,6 +107,13 @@ naughty.connect_signal("request::display", function(n)
                 {
                     layout = wibox.layout.fixed.vertical,
                     spacing = dpi(8),
+                    {
+                        widget = wibox.widget.textbox,
+                        font = "CaskaydiaCoveNerd Font Light 9",
+                        ellipsize = "end",
+                        valign = "center",
+                        markup = n.get_app_name(n) .. " | " .. date
+                    },
                     {
                         widget = wibox.widget.textbox,
                         font = "CaskaydiaCoveNerd Font SemiBold 12",

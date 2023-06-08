@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 if [[ $(pidof pipewire | wc -c) -eq 0 ]]; then
     exec pipewire &
@@ -16,11 +16,17 @@ if [[ $(pidof picom | wc -c) -eq 0 ]]; then
     exec picom &
 fi
 
-exec env XSECURELOCK_NO_COMPOSITE=1 xss-lock xsecurelock &
-exec thunar --daemon &
-exec xrdb -merge .Xresources &
-exec kdeconnect-indicator &
-exec echo 'exit' | qalc -e &
+if [[ $(pidof thunar | wc -c) -eq 0 ]]; then
+    exec thunar --daemon &
+fi
+
+if [[ $(pidof xss-lock | wc -c) -eq 0 ]]; then
+    exec xss-lock env XSECURELOCK_COMPOSITE_OBSCURER=0 xsecurelock &
+fi
+
+if [[ $(pidof kdeconnect-indicator | wc -c) -eq 0 ]]; then
+    exec kdeconnect-indicator &
+fi
 
 if [[ $(pidof xfce-polkit | wc -c) -eq 0 ]]; then
     exec /usr/libexec/xfce-polkit &
@@ -70,5 +76,9 @@ if [[ $(pgrep solaar | wc -c) -eq 0 ]]; then
     exec solaar -w hide -b regular &
 fi
 
-sleep 30s
-exec birdtray &
+if [[ $(pidof birdtray | wc -c) -eq 0 ]]; then
+    exec birdtray &
+fi
+
+exec xrdb -merge .Xresources &
+exec echo 'exit' | qalc -e &

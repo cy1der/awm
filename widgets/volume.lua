@@ -54,7 +54,6 @@ end
 local function worker()
     local refresh_rate = 1
     local step = 5
-    local device = ''
 
     volume.widget = get_widget()
 
@@ -66,7 +65,7 @@ local function worker()
             widget:unmute()
         end
         local volume_level = string.match(stdout, "(%d?%d?%d)%%")
-        volume_level = string.format("% 3d", volume_level)
+        volume_level = string.format("% 3d", volume_level or 0)
         widget:set_volume_level(volume_level)
     end
 
@@ -100,4 +99,4 @@ local function worker()
     return volume.widget
 end
 
-return setmetatable(volume, {__call = function(_, ...) return worker() end})
+return setmetatable(volume, {__call = function(_) return worker() end})

@@ -11,11 +11,7 @@ function table.slice(tbl, first, last, step)
 end
 
 local global_state = {
-    cache = {
-        n_id = 0,
-        notifications = {},
-        notifications_subscribers = {}
-    }
+    cache = {n_id = 0, notifications = {}, notifications_subscribers = {}}
 }
 
 global_state.cache.notifications_remove = function(id)
@@ -33,27 +29,28 @@ global_state.cache.notifications_remove = function(id)
     elseif found == #c.notifications then
         c.notifications = table.slice(c.notifications, 1, found - 1)
     elseif found > 0 then
-        c.notifications =
-        gears.table.join(table.slice(c.notifications, 1, found - 1), table.slice(c.notifications, found + 1))
+        c.notifications = gears.table.join(
+                              table.slice(c.notifications, 1, found - 1),
+                              table.slice(c.notifications, found + 1))
     end
 
-    for _, fn in ipairs(c.notifications_subscribers) do
-        fn()
-    end
+    for _, fn in ipairs(c.notifications_subscribers) do fn() end
 end
 
-global_state.cache.notifications_update = function(n)
+global_state.cache.notifications_update = function(n, date)
+    n.date = date
     local c = global_state.cache
-    c.notifications = gears.table.join({ id = c.n_id + 1, n }, c.notifications)
+    c.notifications = gears.table.join({id = c.n_id + 1, n}, c.notifications)
     c.n_id = c.n_id + 1
 
-    for _, fn in ipairs(c.notifications_subscribers) do
-        fn()
-    end
+    for _, fn in ipairs(c.notifications_subscribers) do fn() end
 end
 
 global_state.cache.notifications_subscribe = function(fn)
-    global_state.cache.notifications_subscribers = gears.table.join(global_state.cache.notifications_subscribers, { fn })
+    global_state.cache.notifications_subscribers = gears.table.join(
+                                                       global_state.cache
+                                                           .notifications_subscribers,
+                                                       {fn})
 end
 
 return global_state
