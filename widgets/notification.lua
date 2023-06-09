@@ -15,7 +15,6 @@ local path_to_icons = HOME ..
 local on = path_to_icons .. "on.png"
 local off = path_to_icons .. "off.png"
 local s = true
-local timeout = 5
 
 local dnd = wibox.widget {
     {
@@ -39,10 +38,6 @@ local dnd = wibox.widget {
 }
 
 dnd.margin.text_container.text:set_markup(#global_state.cache.notifications)
-
-gears.timer.start_new(timeout, function()
-    dnd.margin.text_container.text:set_markup(#global_state.cache.notifications)
-end)
 
 local popup = wibox {
     ontop = true,
@@ -198,5 +193,14 @@ end), awful.button({}, 3, function()
     global_state.cache.notifications = {}
     popup.visible = false
 end)))
+
+gears.timer {
+    timeout = 5,
+    autostart = true,
+    callback = function()
+        dnd.margin.text_container.text:set_markup(#global_state.cache
+                                                      .notifications)
+    end
+}
 
 return dnd
