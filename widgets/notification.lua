@@ -6,6 +6,7 @@ local html_entities = require "util.html_entities"
 local gears = require "gears"
 local xresources = require "beautiful.xresources"
 local dpi = xresources.apply_dpi
+local beautiful = require "beautiful"
 
 local HOME = os.getenv("HOME")
 local path_to_icons = HOME ..
@@ -14,12 +15,34 @@ local path_to_icons = HOME ..
 local on = path_to_icons .. "on.png"
 local off = path_to_icons .. "off.png"
 local s = true
+local timeout = 5
 
 local dnd = wibox.widget {
-    {id = "icon", widget = wibox.widget.imagebox, image = on, resize = true},
-    valign = "center",
-    layout = wibox.container.place
+    {
+        {id = "icon", widget = wibox.widget.imagebox, image = on, resize = true},
+        id = "place",
+        valign = 'center',
+        layout = wibox.container.place
+    },
+    {
+        {
+            {id = "text", widget = wibox.widget.textbox, font = beautiful.font},
+            id = "text_container",
+            widget = wibox.container.background,
+            fg = "#FFFFFF"
+        },
+        id = "margin",
+        widget = wibox.container.margin,
+        left = dpi(8)
+    },
+    layout = wibox.layout.fixed.horizontal
 }
+
+dnd.margin.text_container.text:set_markup(#global_state.cache.notifications)
+
+gears.timer.start_new(timeout, function()
+    dnd.margin.text_container.text:set_markup(#global_state.cache.notifications)
+end)
 
 local popup = wibox {
     ontop = true,
@@ -45,8 +68,6 @@ dnd:buttons{
             elseif n.get_urgency(n) == "critical" then
                 border_color = "#FF5250"
             end
-
-            for key, value in pairs(n) do print(key, value) end
 
             local widget = wibox.widget {
                 widget = wibox.container.constraint,
@@ -162,10 +183,10 @@ dnd:buttons{
     end), awful.button({}, 3, function()
         s = not s
         if s then
-            dnd.icon:set_image(on)
+            dnd.place.icon:set_image(on)
             naughty.resume()
         else
-            dnd.icon:set_image(off)
+            dnd.place.icon:set_image(off)
             naughty.suspend()
         end
     end)

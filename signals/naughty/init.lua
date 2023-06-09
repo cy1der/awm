@@ -56,7 +56,7 @@ naughty.connect_signal("request::display", function(n)
                 ellipsize = "end",
                 valign = "center",
                 markup = (n.get_app_name(n) ~= "" and n.get_app_name(n) or
-                    "awesome" .. " | ") .. date
+                    "awesome") .. " | " .. date
             },
             {
                 widget = wibox.widget.textbox,
@@ -87,8 +87,8 @@ naughty.connect_signal("request::display", function(n)
                 valign = "center",
                 {
                     widget = wibox.container.constraint,
-                    width = dpi(256),
-                    height = dpi(256),
+                    width = dpi(272),
+                    height = dpi(272),
                     strategy = "max",
                     {
                         widget = naughty.widget.icon,
@@ -113,7 +113,8 @@ naughty.connect_signal("request::display", function(n)
                         font = "CaskaydiaCoveNerd Font Light 9",
                         ellipsize = "end",
                         valign = "center",
-                        markup = n.get_app_name(n) .. " | " .. date
+                        markup = (n.get_app_name(n) ~= "" and n.get_app_name(n) or
+                            "awesome") .. " | " .. date
                     },
                     {
                         widget = wibox.widget.textbox,

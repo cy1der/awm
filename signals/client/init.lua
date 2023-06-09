@@ -12,8 +12,8 @@ client.connect_signal('request::titlebars', function(c)
                                        7, 7, 7, 7, "#000000"),
                 wibox.container.margin(awful.titlebar.widget.ontopbutton(c), 7,
                                        7, 7, 7, "#000000"),
-                wibox.container.margin(awful.titlebar.widget.iconwidget(c), 4,
-                                       4, 4, 4, "#000000"),
+                wibox.container.margin(awful.titlebar.widget.iconwidget(c), 7,
+                                       7, 7, 7, "#000000"),
                 layout = wibox.layout.fixed.horizontal
             },
             widget = wibox.container.margin

@@ -87,7 +87,7 @@ local function worker()
     end
 
     net_update()
-    local timer = gears.timer.start_new(timeout, function()
+    gears.timer.start_new(timeout, function()
         net_update()
         return true
     end)

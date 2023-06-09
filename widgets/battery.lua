@@ -14,7 +14,6 @@ local function worker()
                               "/.config/awesome/theme/icons/widgets/battery/"
     local show_current_level = true
     local display_notification = true
-    local display_notification_onClick = false
     local position = "top_right"
     local timeout = 3
 
@@ -158,13 +157,6 @@ local function worker()
     if display_notification then
         battery_widget:connect_signal("mouse::enter",
                                       function() show_battery_status() end)
-        battery_widget:connect_signal("mouse::leave", function()
-            naughty.destroy(notification)
-        end)
-    elseif display_notification_onClick then
-        battery_widget:connect_signal("button::press", function(_, _, _, button)
-            if (button == 1) then show_battery_status() end
-        end)
         battery_widget:connect_signal("mouse::leave", function()
             naughty.destroy(notification)
         end)
