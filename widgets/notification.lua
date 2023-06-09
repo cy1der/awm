@@ -37,7 +37,7 @@ local dnd = wibox.widget {
     layout = wibox.layout.fixed.horizontal
 }
 
-dnd.margin.text_container.text:set_markup(#global_state.cache.notifications)
+dnd.margin.text_container.text:set_markup(global_state.cache.unread)
 
 local popup = wibox {
     ontop = true,
@@ -45,12 +45,15 @@ local popup = wibox {
     shape = gears.shape.rectangle,
     border_width = dpi(2),
     border_color = "#FFFFFF",
-    height = dpi(768),
+    height = dpi(804),
     width = dpi(512)
 }
 
 dnd:buttons{
     awful.button({}, 1, function()
+        global_state.cache.unread = 0
+        dnd.margin.text_container.text:set_markup(global_state.cache.unread)
+
         local pointer = 0
         local min_notifications = 8
 
@@ -66,7 +69,7 @@ dnd:buttons{
 
             local widget = wibox.widget {
                 widget = wibox.container.constraint,
-                width = dpi(504),
+                width = dpi(530),
                 strategy = "exact",
                 {
                     widget = wibox.container.background,
@@ -134,15 +137,49 @@ dnd:buttons{
                 end
             end)
 
-            popup:setup{
+            local clear_notifs = wibox.widget {
+                widget = wibox.container.background,
+                bg = "#000000",
+                fg = "#FFFFFF",
+                shape_border_width = dpi(2),
+                shape_border_color = "#FFFFFF",
+                shape = gears.shape.rectangle,
                 {
                     {
                         {
                             widget = wibox.widget.textbox,
-                            font = "CaskaydiaCoveNerd Font SemiBold 12",
-                            markup = "Notification History\nRight click to clear",
-                            valign = "center"
+                            font = "CaskaydiaCoveNerd Font SemiBold 36",
+                            markup = "󰎟 ",
+                            align = "center",
+                            forced_width = dpi(52),
+                            forced_height = dpi(52)
                         },
+                        layout = wibox.layout.align.horizontal
+                    },
+                    widget = wibox.container.margin,
+                    margins = dpi(8)
+                }
+            }
+
+            clear_notifs:buttons(gears.table.join(
+                                     awful.button({}, 1, nil, function()
+                    global_state.cache.notifications = {}
+                    popup.visible = false
+                end)))
+
+            local header = wibox.layout.align.horizontal()
+            header:set_right(clear_notifs)
+            header:set_left(wibox.widget {
+                widget = wibox.widget.textbox,
+                font = "CaskaydiaCoveNerd Font SemiBold 24",
+                markup = "Notifications",
+                valign = "center"
+            })
+
+            popup:setup{
+                {
+                    {
+                        header,
                         list,
                         spacing = dpi(8),
                         layout = wibox.layout.fixed.vertical
@@ -158,6 +195,7 @@ dnd:buttons{
             popup:setup{
                 {
                     {
+                        font = "CaskaydiaCoveNerd Font SemiBold 24",
                         markup = "No notifications",
                         valign = 'center',
                         align = 'center',
@@ -174,7 +212,6 @@ dnd:buttons{
 
         popup.visible = not popup.visible
         awful.placement.top(popup, {margins = {top = dpi(24)}, parent = mouse})
-
     end), awful.button({}, 3, function()
         s = not s
         if s then
@@ -185,22 +222,6 @@ dnd:buttons{
             naughty.suspend()
         end
     end)
-}
-
-popup:buttons(awful.util.table.join(awful.button({}, 1, function()
-    popup.visible = false
-end), awful.button({}, 3, function()
-    global_state.cache.notifications = {}
-    popup.visible = false
-end)))
-
-gears.timer {
-    timeout = 5,
-    autostart = true,
-    callback = function()
-        dnd.margin.text_container.text:set_markup(#global_state.cache
-                                                      .notifications)
-    end
 }
 
 return dnd

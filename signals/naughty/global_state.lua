@@ -11,7 +11,12 @@ function table.slice(tbl, first, last, step)
 end
 
 local global_state = {
-    cache = {n_id = 0, notifications = {}, notifications_subscribers = {}}
+    cache = {
+        n_id = 0,
+        notifications = {},
+        notifications_subscribers = {},
+        unread = 0
+    }
 }
 
 global_state.cache.notifications_remove = function(id)
@@ -44,6 +49,8 @@ global_state.cache.notifications_update = function(n, date)
     c.n_id = c.n_id + 1
 
     for _, fn in ipairs(c.notifications_subscribers) do fn() end
+
+    global_state.cache.unread = global_state.cache.unread + 1
 end
 
 global_state.cache.notifications_subscribe = function(fn)

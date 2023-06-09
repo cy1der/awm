@@ -4,6 +4,7 @@ local xresources = require 'beautiful.xresources'
 local dpi = xresources.apply_dpi
 local global_state = require("signals.naughty.global_state")
 local html_entities = require("util.html_entities")
+local dnd_notif = require("widgets.notification")
 
 naughty.connect_signal('request::display_error', function(message, startup)
     naughty.notification {
@@ -39,6 +40,8 @@ naughty.connect_signal("request::display", function(n)
 
     if n.get_app_name(n) ~= "" then
         global_state.cache.notifications_update(n, date)
+        dnd_notif.margin.text_container.text:set_markup(global_state.cache
+                                                            .unread)
     end
 
     local border_color = "#FFFFFF"
