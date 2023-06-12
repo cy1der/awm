@@ -1,7 +1,4 @@
 #!/bin/bash
 
 mkdir -p ~/Pictures/Screenshots/"$(date +"%Y-%m")"
-FILENAME="$(date +"%Y-%m-%d_%R:%S")"
-URL="$(flameshot gui -r -p ~/Pictures/Screenshots/"$(date +"%Y-%m")"/"$FILENAME".png | curl -X POST -H 'Content-Type: multipart/form-data' -H 'Accept: application/json' -H 'User-Agent: ShareX/13.4.0' -F "key=$UPLOAD_SYSTEMS_KEY" -F "file=@-;filename=$FILENAME.png" https://api.upload.systems/images/upload | jq -r '.url')"
-echo "$URL" | xclip -sel clip
-notify-send --urgency=low "Image URL copied to clipboard" "$URL"
+flameshot gui -r -c -p ~/Pictures/Screenshots/"$(date +"%Y-%m")"/"$(date +"%Y-%m-%d_%R:%S")".png

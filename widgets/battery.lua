@@ -4,6 +4,7 @@ local watch = require("awful.widget.watch")
 local wibox = require("wibox")
 local gfs = require("gears.filesystem")
 local dpi = require('beautiful').xresources.apply_dpi
+local gears = require("gears")
 
 local HOME = os.getenv("HOME")
 
@@ -12,10 +13,6 @@ local function worker()
     local font = "CaskaydiaCoveNerd Font SemiLight 12"
     local path_to_icons = HOME ..
                               "/.config/awesome/theme/icons/widgets/battery/"
-    local show_current_level = true
-    local display_notification = true
-    local position = "top_right"
-    local timeout = 3
 
     if not gfs.dir_readable(path_to_icons) then
         naughty.notify {
@@ -42,20 +39,48 @@ local function worker()
         layout = wibox.layout.fixed.horizontal
     }
 
-    local notification
+    local popup = wibox {
+        ontop = true,
+        visible = false,
+        shape = gears.shape.rectangle,
+        border_width = dpi(2),
+        border_color = "#FFFFFF",
+        height = dpi(86),
+        width = dpi(512)
+    }
+
     local function show_battery_status()
         awful.spawn.easy_async(
             [[bash -c 'acpi| grep -v "rate information unavailable"']],
             function(out, _, _, _)
-                naughty.destroy(notification)
-                notification = naughty.notify {
-                    text = out,
-                    title = "Battery Status",
-                    position = position,
-                    timeout = 5,
-                    width = 600,
-                    screen = mouse.screen
+                popup.visible = not popup.visible
+
+                popup:setup{
+                    {
+                        {
+                            {
+                                font = "CaskaydiaCoveNerd Font Bold 12",
+                                markup = "Battery",
+                                layout = wibox.widget.textbox
+                            },
+                            {
+                                font = "CaskaydiaCoveNerd Font Regular 12",
+                                markup = out,
+                                layout = wibox.widget.textbox
+                            },
+                            spacing = dpi(8),
+                            layout = wibox.layout.fixed.vertical
+                        },
+                        margins = dpi(12),
+                        widget = wibox.container.margin
+                    },
+                    widget = wibox.container.background,
+                    bg = "#000000",
+                    fg = "#FFFFFF"
                 }
+
+                awful.placement.top(popup,
+                                    {margins = {top = dpi(24)}, parent = mouse})
             end)
     end
 
@@ -71,8 +96,8 @@ local function worker()
 
     local last_battery_check = os.time();
 
-    watch([[ bash -c 'acpi -i | grep -v "rate information unavailable"' ]],
-          timeout, function(widget, out)
+    watch([[ bash -c 'acpi -i | grep -v "rate information unavailable"' ]], 3,
+          function(widget, out)
         local battery_info = {}
         local capacities = {}
 
@@ -107,9 +132,7 @@ local function worker()
 
         charge = charge / capacity
 
-        if show_current_level then
-            level_widget.text = string.format('%d%%', charge)
-        end
+        level_widget.text = string.format('%d%%', charge)
 
         local iconBatteryStatus
         local iconBatteryLevel
@@ -154,13 +177,10 @@ local function worker()
                                   iconBatteryLevel .. ".png")
     end, icon_widget)
 
-    if display_notification then
-        battery_widget:connect_signal("mouse::enter",
-                                      function() show_battery_status() end)
-        battery_widget:connect_signal("mouse::leave", function()
-            naughty.destroy(notification)
-        end)
-    end
+    battery_widget:buttons(gears.table.join(
+                               awful.button({}, 1, nil, function()
+            show_battery_status()
+        end)))
 
     return wibox.container.margin(battery_widget, 0, 0)
 end

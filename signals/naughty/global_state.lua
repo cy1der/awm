@@ -15,7 +15,8 @@ local global_state = {
         n_id = 0,
         notifications = {},
         notifications_subscribers = {},
-        unread = 0
+        unread = 0,
+        show = true
     }
 }
 

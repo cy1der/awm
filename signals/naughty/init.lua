@@ -38,150 +38,172 @@ naughty.connect_signal("request::display", function(n)
 
     local date = getFormattedDateTime()
 
-    if n.get_app_name(n) ~= "" then
-        global_state.cache.notifications_update(n, date)
-        dnd_notif.margin.text_container.text:set_markup(global_state.cache
+    global_state.cache.notifications_update(n, date)
+    dnd_notif.dnd.margin.text_container.text:set_markup(global_state.cache
                                                             .unread)
-    end
+    dnd_notif.update_popup()
 
-    local border_color = "#FFFFFF"
-    local timeout = 7.5
-    local notification_widget_no_icon = {
-        margins = dpi(12),
-        widget = wibox.container.margin,
-        {
-            layout = wibox.layout.fixed.vertical,
-            spacing = dpi(8),
-            fill_space = true,
+    if global_state.cache.show and not dnd_notif.popup.visible then
+        local border_color = "#FFFFFF"
+        local timeout = 7.5
+        local hover_timeout = 10
+        local notification_widget_no_icon = {
+            margins = dpi(12),
+            widget = wibox.container.margin,
             {
-                widget = wibox.widget.textbox,
-                font = "CaskaydiaCoveNerd Font Light 9",
-                ellipsize = "end",
-                valign = "center",
-                markup = (n.get_app_name(n) ~= "" and n.get_app_name(n) or
-                    "awesome") .. " | " .. date
-            },
-            {
-                widget = wibox.widget.textbox,
-                font = "CaskaydiaCoveNerd Font SemiBold 12",
-                ellipsize = "end",
-                valign = "center",
-                markup = html_entities.decode(n.title)
-            },
-            {
-                widget = wibox.widget.textbox,
-                font = "CaskaydiaCoveNerd Font SemiLight 12",
-                ellipsize = "end",
-                valign = "center",
-                markup = html_entities.decode(n.message)
-            },
-            naughty.list.actions
-        }
-    }
-    local notification_widget = {
-        margins = dpi(12),
-        widget = wibox.container.margin,
-        {
-            layout = wibox.layout.fixed.horizontal,
-            fill_space = true,
-            spacing = dpi(16),
-            {
-                widget = wibox.container.place,
-                valign = "center",
+                layout = wibox.layout.fixed.vertical,
+                spacing = dpi(8),
+                fill_space = true,
                 {
-                    widget = wibox.container.constraint,
-                    width = dpi(272),
-                    height = dpi(272),
-                    strategy = "max",
+                    widget = wibox.widget.textbox,
+                    font = "CaskaydiaCoveNerd Font Light 9",
+                    ellipsize = "end",
+                    valign = "center",
+                    markup = (n.get_app_name(n) ~= "" and n.get_app_name(n) or
+                        "awesome") .. " | " .. date
+                },
+                {
+                    widget = wibox.widget.textbox,
+                    font = "CaskaydiaCoveNerd Font SemiBold 12",
+                    ellipsize = "end",
+                    valign = "center",
+                    markup = html_entities.decode(n.title)
+                },
+                {
+                    widget = wibox.widget.textbox,
+                    font = "CaskaydiaCoveNerd Font SemiLight 12",
+                    ellipsize = "end",
+                    valign = "center",
+                    markup = html_entities.decode(n.message)
+                },
+                naughty.list.actions
+            }
+        }
+        local notification_widget = {
+            margins = dpi(12),
+            widget = wibox.container.margin,
+            {
+                layout = wibox.layout.fixed.horizontal,
+                fill_space = true,
+                spacing = dpi(16),
+                {
+                    widget = wibox.container.place,
+                    valign = "center",
                     {
-                        widget = naughty.widget.icon,
-                        notification = n,
-                        resize_strategy = "scale",
-                        scaling_quality = "best",
-                        upscale = true,
-                        downscale = true,
-                        resize = true
+                        widget = wibox.container.constraint,
+                        width = dpi(64),
+                        strategy = "max",
+                        {
+                            widget = naughty.widget.icon,
+                            notification = n,
+                            resize_strategy = "scale",
+                            scaling_quality = "best",
+                            upscale = true,
+                            downscale = true,
+                            resize = true
+                        }
+                    }
+                },
+                {
+                    widget = wibox.container.place,
+                    valign = "center",
+                    halign = "left",
+                    {
+                        layout = wibox.layout.fixed.vertical,
+                        spacing = dpi(8),
+                        {
+                            widget = wibox.widget.textbox,
+                            font = "CaskaydiaCoveNerd Font Light 9",
+                            ellipsize = "end",
+                            valign = "center",
+                            markup = (n.get_app_name(n) ~= "" and
+                                n.get_app_name(n) or "awesome") .. " | " .. date
+                        },
+                        {
+                            widget = wibox.widget.textbox,
+                            font = "CaskaydiaCoveNerd Font SemiBold 12",
+                            ellipsize = "end",
+                            valign = "center",
+                            markup = html_entities.decode(n.title)
+                        },
+                        {
+                            widget = wibox.widget.textbox,
+                            font = "CaskaydiaCoveNerd Font SemiLight 12",
+                            ellipsize = "end",
+                            valign = "center",
+                            markup = html_entities.decode(n.message)
+                        },
+                        naughty.list.actions
                     }
                 }
-            },
-            {
-                widget = wibox.container.place,
-                valign = "center",
-                halign = "left",
-                {
-                    layout = wibox.layout.fixed.vertical,
-                    spacing = dpi(8),
-                    {
-                        widget = wibox.widget.textbox,
-                        font = "CaskaydiaCoveNerd Font Light 9",
-                        ellipsize = "end",
-                        valign = "center",
-                        markup = (n.get_app_name(n) ~= "" and n.get_app_name(n) or
-                            "awesome") .. " | " .. date
-                    },
-                    {
-                        widget = wibox.widget.textbox,
-                        font = "CaskaydiaCoveNerd Font SemiBold 12",
-                        ellipsize = "end",
-                        valign = "center",
-                        markup = html_entities.decode(n.title)
-                    },
-                    {
-                        widget = wibox.widget.textbox,
-                        font = "CaskaydiaCoveNerd Font SemiLight 12",
-                        ellipsize = "end",
-                        valign = "center",
-                        markup = html_entities.decode(n.message)
-                    },
-                    naughty.list.actions
+            }
+        }
+
+        if n.urgency == "low" then
+            timeout = 3
+            hover_timeout = 5
+            border_color = "#43A047"
+        elseif n.urgency == "critical" then
+            timeout = 86400
+            hover_timeout = 86400
+            border_color = "#FF5250"
+        end
+
+        table.insert(n.actions, naughty.action {name = "Raise"})
+
+        for _, a in ipairs(n.actions) do
+            a:connect_signal("invoked", function(action)
+                if action.name == "Raise" then
+                    local jumped = false
+                    for _, c in ipairs(n.clients) do
+                        c.urgent = true
+                        if jumped then
+                            c:activate{context = "client.jumpto"}
+                        else
+                            c:jump_to()
+                            jumped = true
+                        end
+                    end
+                end
+            end)
+        end
+
+        if n.icon == nil then
+            n.timeout = timeout
+            n.hover_timeout = hover_timeout
+            naughty.layout.box {
+                notification = n,
+                ontop = true,
+                position = "top_right",
+                bg = "#000000",
+                fg = "#FFFFFF",
+                border_width = dpi(2),
+                border_color = border_color,
+                widget_template = {
+                    widget = wibox.container.constraint,
+                    width = dpi(200),
+                    strategy = "exact",
+                    notification_widget_no_icon
                 }
             }
-        }
-    }
-
-    if n.urgency == "low" then
-        timeout = 3
-        border_color = "#43A047"
-    elseif n.urgency == "critical" then
-        timeout = 86400
-        border_color = "#FF5250"
-    end
-
-    if n.icon == nil then
-        n.timeout = timeout
-        naughty.layout.box {
-            notification = n,
-            maximum_height = dpi(256),
-            ontop = true,
-            position = "top_right",
-            bg = "#000000",
-            fg = "#FFFFFF",
-            border_width = dpi(2),
-            border_color = border_color,
-            widget_template = {
-                widget = wibox.container.constraint,
-                width = dpi(200),
-                strategy = "exact",
-                notification_widget_no_icon
+        else
+            n.timeout = timeout
+            n.hover_timeout = hover_timeout
+            naughty.layout.box {
+                notification = n,
+                ontop = true,
+                position = "top_right",
+                bg = "#000000",
+                fg = "#FFFFFF",
+                border_width = dpi(2),
+                border_color = border_color,
+                widget_template = {
+                    widget = wibox.container.constraint,
+                    width = dpi(200),
+                    strategy = "exact",
+                    notification_widget
+                }
             }
-        }
-    else
-        n.timeout = timeout
-        naughty.layout.box {
-            notification = n,
-            maximum_height = dpi(256),
-            ontop = true,
-            position = "top_right",
-            bg = "#000000",
-            fg = "#FFFFFF",
-            border_width = dpi(2),
-            border_color = border_color,
-            widget_template = {
-                widget = wibox.container.constraint,
-                width = dpi(200),
-                strategy = "exact",
-                notification_widget
-            }
-        }
+        end
     end
 end)

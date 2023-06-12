@@ -159,7 +159,7 @@ awful.keyboard.append_global_keybindings {
         description = "lock screen",
         group = "system",
         on_press = function()
-            awful.spawn("env XSECURELOCK_NO_COMPOSITE=1 xsecurelock")
+            awful.spawn("env XSECURELOCK_COMPOSITE_OBSCURER=0 xsecurelock")
         end
     }, awful.key {
         modifiers = {},

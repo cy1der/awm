@@ -1,8 +1,8 @@
 local wibox = require("wibox")
 local awful = require("awful")
 local beautiful = require("beautiful")
-local naughty = require("naughty")
 local gears = require("gears")
+local dpi = require('beautiful').xresources.apply_dpi
 
 local icon_path = os.getenv("HOME") ..
                       "/.config/awesome/theme/icons/widgets/wifi/"
@@ -94,87 +94,101 @@ local function worker()
 
     widgets_table["imagebox"] = net_icon
     widgets_table["textbox"] = net_text
+
+    local popup = wibox {
+        ontop = true,
+        visible = false,
+        shape = gears.shape.rectangle,
+        border_width = dpi(2),
+        border_color = "#FFFFFF",
+        height = dpi(176),
+        width = dpi(512)
+    }
+
     if widget then
         widget:add(net_icon)
         widget:add(net_text)
-        wireless:attach(widget)
-    end
 
-    local function text_grabber()
-        local msg = ""
-        if connected then
-            local mac = "N/A"
-            local essid = "N/A"
-            local bitrate = "N/A"
-            local inet = "N/A"
+        widget:buttons(gears.table.join(awful.button({}, 1, nil, function()
+            local msg = ""
+            if connected then
+                local mac = "N/A"
+                local essid = "N/A"
+                local bitrate = "N/A"
+                local inet = "N/A"
 
-            local f = io.popen("iw dev " .. interface .. " link")
+                local f = io.popen("iw dev " .. interface .. " link")
 
-            if f then
-                for line in f:lines() do
-                    mac = string.match(line, "Connected to ([0-f:]+)") or mac
-                    essid = string.match(line, "SSID: (.+)") or essid
-                    bitrate = string.match(line, "tx bitrate: (.+/s)") or
-                                  bitrate
+                if f then
+                    for line in f:lines() do
+                        mac = string.match(line, "Connected to ([0-f:]+)") or
+                                  mac
+                        essid = string.match(line, "SSID: (.+)") or essid
+                        bitrate = string.match(line, "tx bitrate: (.+/s)") or
+                                      bitrate
+                    end
+                    f:close()
                 end
-                f:close()
+
+                f = io.popen("ip addr show " .. interface)
+                if f then
+                    for line in f:lines() do
+                        inet =
+                            string.match(line, "inet (%d+%.%d+%.%d+%.%d+)") or
+                                inet
+                    end
+                    f:close()
+                end
+
+                local signal = ""
+                local metrics_down = ""
+                local metrics_up = ""
+                local tdown = net_stats(interface, "d")
+                local tup = net_stats(interface, "u")
+                metrics_down = "DOWN:\t\t" .. tdown .. "\n"
+                metrics_up = "UP:\t\t" .. tup .. "\n"
+
+                msg =
+                    "ESSID:\t\t" .. essid .. "\n" .. "IP:\t\t" .. inet .. "\n" ..
+                        "BSSID\t\t" .. mac .. "\n" .. "" .. metrics_down .. "" ..
+                        metrics_up .. "" .. signal .. "Bit rate:\t" .. bitrate
+
+            else
+                msg = "Wireless network is disconnected"
             end
 
-            f = io.popen("ip addr show " .. interface)
-            if f then
-                for line in f:lines() do
-                    inet = string.match(line, "inet (%d+%.%d+%.%d+%.%d+)") or
-                               inet
-                end
-                f:close()
-            end
+            popup.visible = not popup.visible
 
-            local signal = ""
-            local metrics_down = ""
-            local metrics_up = ""
-            local tdown = net_stats(interface, "d")
-            local tup = net_stats(interface, "u")
-            metrics_down = "DOWN:\t\t" .. tdown .. "\n"
-            metrics_up = "UP:\t\t" .. tup .. "\n"
+            popup:setup{
+                {
+                    {
+                        {
+                            font = "CaskaydiaCoveNerd Font Bold 12",
+                            markup = "Interface: " .. interface,
+                            layout = wibox.widget.textbox
+                        },
+                        {
+                            font = "CaskaydiaCoveNerd Font Regular 12",
+                            markup = msg,
+                            layout = wibox.widget.textbox
+                        },
+                        spacing = dpi(8),
+                        layout = wibox.layout.fixed.vertical
+                    },
+                    margins = dpi(12),
+                    widget = wibox.container.margin
+                },
+                widget = wibox.container.background,
+                bg = "#000000",
+                fg = "#FFFFFF"
+            }
 
-            msg = "ESSID:\t\t" .. essid .. "\n" .. "IP:\t\t" .. inet .. "\n" ..
-                      "BSSID\t\t" .. mac .. "\n" .. "" .. metrics_down .. "" ..
-                      metrics_up .. "" .. signal .. "Bit rate:\t" .. bitrate
-
-        else
-            msg = "Wireless network is disconnected"
-        end
-
-        return msg
-    end
-
-    local notification = nil
-    function wireless:hide()
-        if notification ~= nil then
-            naughty.destroy(notification)
-            notification = nil
-        end
-    end
-
-    function wireless:show(t_out)
-        wireless:hide()
-
-        notification = naughty.notify({
-            text = text_grabber(),
-            timeout = t_out,
-            screen = mouse.screen,
-            position = naughty.config.defaults.position,
-            title = "Interface: " .. interface
-        })
+            awful.placement.top(popup,
+                                {margins = {top = dpi(24)}, parent = mouse})
+        end)))
     end
 
     return widget or widgets_table
-end
-
-function wireless:attach(widget)
-    widget:connect_signal('mouse::enter', function() wireless:show(0) end)
-    widget:connect_signal('mouse::leave', function() wireless:hide() end)
-    return widget
 end
 
 return setmetatable(wireless, {__call = function(_, ...) return worker() end})

@@ -2,6 +2,11 @@ local awful = require 'awful'
 require 'awful.autofocus'
 local wibox = require 'wibox'
 
+client.connect_signal("property::urgent", function(c)
+    c.minimized = false
+    c:jump_to()
+end)
+
 client.connect_signal('request::titlebars', function(c)
     awful.titlebar(c, {size = 36}).widget = {
         {
