@@ -1,6 +1,6 @@
 local _M = {
-   terminal = os.getenv('TERMINAL') or 'alacritty',
-   editor   = os.getenv('VISUAL') or '/opt/vscode/bin/code',
+    terminal = os.getenv('TERMINAL') or 'alacritty',
+    editor = os.getenv('VISUAL') or 'code-oss'
 }
 
 _M.editor_cmd = _M.terminal .. ' -e ' .. _M.editor

@@ -149,25 +149,6 @@ naughty.connect_signal("request::display", function(n)
             border_color = "#FF5250"
         end
 
-        table.insert(n.actions, naughty.action {name = "Raise"})
-
-        for _, a in ipairs(n.actions) do
-            a:connect_signal("invoked", function(action)
-                if action.name == "Raise" then
-                    local jumped = false
-                    for _, c in ipairs(n.clients) do
-                        c.urgent = true
-                        if jumped then
-                            c:activate{context = "client.jumpto"}
-                        else
-                            c:jump_to()
-                            jumped = true
-                        end
-                    end
-                end
-            end)
-        end
-
         if n.icon == nil then
             n.timeout = timeout
             n.hover_timeout = hover_timeout

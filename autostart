@@ -61,8 +61,12 @@ if [[ $(pidof keepassxc | wc -c) -eq 0 ]]; then
 fi
 
 if [[ $(pidof Discord | wc -c) -eq 0 ]]; then
-    exec /usr/lib/discord/Discord --start-minimized &
+    exec Discord --start-minimized &
 fi
+
+# if [[ $(pgrep -f element-desktop | wc -c) -eq 0 ]]; then
+#     exec element-desktop --hidden &
+# fi
 
 if [[ $(pidof syncthing | wc -c) -eq 0 ]]; then
     exec syncthing --no-browser &
