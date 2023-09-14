@@ -1,0 +1,12 @@
+#!/bin/bash
+
+conf="rpi"
+current="$("$(dirname "$0")"/check_wg)"
+
+if [[ "$current" = "on" ]]; then
+    pkexec wg-quick down "$conf" &> /dev/null
+    echo "off"
+else
+    pkexec wg-quick up "$conf" &> /dev/null
+    echo "on"
+fi

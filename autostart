@@ -44,8 +44,12 @@ if [[ $(pidof mpris-proxy | wc -c) -eq 0 ]]; then
     exec mpris-proxy &
 fi
 
-if ! mountpoint -q /mnt/nextcloud ; then
-    exec mount /mnt/nextcloud &
+# if ! mountpoint -q /mnt/nextcloud ; then
+#     exec mount /mnt/nextcloud &
+# fi
+
+if [[ $(pidof nextcloud | wc -c) -eq 0 ]]; then
+    exec nextcloud &
 fi
 
 if [[ $(pidof gamemoded | wc -c) -eq 0 ]]; then
@@ -64,9 +68,9 @@ if [[ $(pidof Discord | wc -c) -eq 0 ]]; then
     exec Discord --start-minimized &
 fi
 
-# if [[ $(pgrep -f element-desktop | wc -c) -eq 0 ]]; then
-#     exec element-desktop --hidden &
-# fi
+if [[ $(pgrep -f element-desktop | wc -c) -eq 0 ]]; then
+    exec element-desktop --hidden &
+fi
 
 if [[ $(pidof syncthing | wc -c) -eq 0 ]]; then
     exec syncthing --no-browser &

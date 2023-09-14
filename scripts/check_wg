@@ -1,0 +1,9 @@
+#!/bin/bash
+
+conf="rpi" # /etc/wireguard/<conf>.conf
+
+if ip -o link show | grep -q "$conf" ; then
+    echo "on"
+else
+    echo "off"
+fi

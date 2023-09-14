@@ -183,8 +183,10 @@ local function worker()
                 fg = "#FFFFFF"
             }
 
-            awful.placement.top(popup,
-                                {margins = {top = dpi(24)}, parent = mouse})
+            awful.placement.top_right(popup, {
+                margins = {top = dpi(46)},
+                parent = awful.screen.focused()
+            })
         end)))
     end
 

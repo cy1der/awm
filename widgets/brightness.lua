@@ -39,7 +39,7 @@ local function worker(user_args)
         brightness_widget.widget = wibox.widget {
             {
                 {id = "icon", resize = true, widget = wibox.widget.imagebox},
-                valign = 'center',
+                -- valign = 'center',
                 layout = wibox.container.margin
             },
             {id = 'txt', font = font, widget = wibox.widget.textbox},

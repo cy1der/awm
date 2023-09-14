@@ -309,7 +309,11 @@ dnd:buttons{
 
         update_popup()
 
-        awful.placement.top(popup, {margins = {top = dpi(24)}, parent = mouse})
+        awful.placement.top_right(popup, {
+            margins = {top = dpi(46)},
+            parent = awful.screen.focused()
+        })
+
         popup.visible = not popup.visible
     end), awful.button({}, 3, function()
         s = not s
