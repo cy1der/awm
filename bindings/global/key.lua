@@ -38,7 +38,7 @@ awful.keyboard.append_global_keybindings {
         key = 'b',
         description = 'open browser',
         group = 'applications',
-        on_press = function() awful.spawn('firefox') end
+        on_press = function() awful.spawn('ungoogled-chromium') end
     }, awful.key {
         modifiers = {mod.super},
         key = "d",
@@ -166,13 +166,17 @@ awful.keyboard.append_global_keybindings {
         key = "XF86MonBrightnessUp",
         description = "increase brightness",
         group = "system",
-        on_press = function() awful.spawn('brightnessctl set +5%') end
+        on_press = function()
+            awful.spawn('brightnessctl --device=amdgpu_bl0 set +5%')
+        end
     }, awful.key {
         modifiers = {},
         key = "XF86MonBrightnessDown",
         description = "decrease brightness",
         group = "system",
-        on_press = function() awful.spawn('brightnessctl set 5%-') end
+        on_press = function()
+            awful.spawn('brightnessctl --device=amdgpu_bl0 set 5%-')
+        end
     }, awful.key {
         modifiers = {},
         key = "XF86Display",

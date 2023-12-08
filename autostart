@@ -44,12 +44,8 @@ if [[ $(pidof mpris-proxy | wc -c) -eq 0 ]]; then
     exec mpris-proxy &
 fi
 
-# if ! mountpoint -q /mnt/nextcloud ; then
-#     exec mount /mnt/nextcloud &
-# fi
-
 if [[ $(pidof nextcloud | wc -c) -eq 0 ]]; then
-    exec nextcloud &
+    exec nextcloud --background &
 fi
 
 if [[ $(pidof gamemoded | wc -c) -eq 0 ]]; then
@@ -84,9 +80,10 @@ if [[ $(pgrep solaar | wc -c) -eq 0 ]]; then
     exec solaar -w hide -b regular &
 fi
 
+exec echo 'exit' | qalc -e &
+exec xrdb -merge .Xresources &
+
 if [[ $(pidof birdtray | wc -c) -eq 0 ]]; then
+    sleep 5
     exec birdtray &
 fi
-
-exec xrdb -merge .Xresources &
-exec echo 'exit' | qalc -e &

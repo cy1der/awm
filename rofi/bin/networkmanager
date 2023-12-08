@@ -3,15 +3,20 @@
 # If you want to use dmenu instead, replace all occurences of "rofi -dmenu" with "dmenu", this might break the qr code sharing however
 # qrencode is required for the WiFi sharing functionality
 
-wireless_interface="wlp0s20f3" # ! Change this accordingly
+wireless_interface="wlo1" # ! Change this accordingly
+wireguard_interface="rpi"
 
 scanned_networks=$(nmcli --fields SSID,SECURITY,BARS device wifi list ifname $wireless_interface | tail -n +2 | grep -v -- -- | awk -F '  +' '{ if (!seen[$1]++) print}' | sed -E 's/▂▄▆█|\*\*\*\*/󰤨/g' | sed -E 's/▂▄▆_|\*\*\*/󰤥/g' | sed -E 's/▂▄__|\*\*/󰤢/g' | sed -E 's/▂___|\*/󰤟/g' | sed 's/____/󰤯/g')
 connectivity="$(nmcli radio wifi)"
+tailscale_state="$(tailscale status | grep -q "stopped" && echo "OFF" || echo "ON")"
+wg_state="$(wg show 2>&1 | grep -q "interface" && echo "ON" || echo "OFF")"
 
 function get_wireless_state() {
     connectivity="$(nmcli radio wifi)"
     wireless_state="$(nmcli device status | grep "^$wireless_interface" | awk '{print $3}')"
-    wireless_current_ssid=$(nmcli device status | grep "^$wireless_interface" | awk -F ' {2,}' '{print $4}')
+    wireless_current_ssid=$(nmcli device status | grep "^$wireless_interface" | awk -F ' {2,}' '{print $4}' | head -n 1 | sed 's/ *$//')
+    tailscale_state="$(tailscale status | grep -q "stopped" && echo "OFF" || echo "ON")"
+    wg_state="$(wg show 2>&1 | grep -q "interface" && echo "ON" || echo "OFF")"
 }
 
 function wireless_connect() {
@@ -63,7 +68,7 @@ function wireless_disconnect() {
 
 function refresh_options() {
     get_wireless_state
-    options="$([[ "$connectivity" = "disabled" ]] && echo "WiFi is disabled" || echo -e "Currently connected to $wireless_current_ssid\n\nScanned Networks\n$scanned_networks\n\nRe-scan Networks\nShare WiFi Connection\nSaved Connections\nDelete Saved Connection\nRestart WiFi" )\n$([[ "$connectivity" = "disabled" ]] && echo "Enable" || echo "Disable" ) WiFi"
+    options="$([[ "$connectivity" = "disabled" ]] && echo -e "WiFi is disabled\n" || echo -e "Internet:  [$wireless_current_ssid]\nTailscale: [$tailscale_state]\nWireGuard: [$wg_state]\n\nScanned Networks\n$scanned_networks\n\nRe-scan Networks\n\nShare WiFi Connection\n\n$([[ "$wg_state" = "OFF" ]] && echo "Enable" || echo "Disable" ) WireGuard\n$([[ "$tailscale_state" = "OFF" ]] && echo "Enable" || echo "Disable" ) Tailscale\n\nSaved Connections\nDelete Saved Connection\n\nRestart WiFi" )\n$([[ "$connectivity" = "disabled" ]] && echo "Enable" || echo "Disable" ) WiFi"
 }
 
 function handle_selection() {
@@ -78,6 +83,12 @@ function handle_selection() {
             ([[ "$connectivity" = "disabled" ]] && nmcli radio wifi on) || nmcli radio wifi off
             get_wireless_state
             notify-send "Successfully $connectivity WiFi" --urgency=low
+        ;;
+        "Enable Tailscale" | "Disable Tailscale")
+            ([[ "$tailscale_state" = "OFF" ]] && tailscale up) || tailscale down
+        ;;
+        "Enable WireGuard" | "Disable WireGuard")
+            ([[ "$wg_state" = "OFF" ]] && pkexec wg-quick up "$wireguard_interface") || pkexec wg-quick down "$wireguard_interface"
         ;;
         "Saved Connections")
             local options="$(nmcli --fields NAME connection show | tail -n +2)\n\nBack"

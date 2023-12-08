@@ -47,7 +47,7 @@ local function worker()
     local widgets_table = {}
     local connected = false
 
-    local interface = "wlp0s20f3"
+    local interface = "wlo1"
     local timeout = 3
     local font = beautiful.font
     local widget = wibox.layout.fixed.horizontal()
@@ -58,6 +58,19 @@ local function worker()
     net_text:set_text(" N/A ")
     local signal_level
     local function net_update()
+        awful.spawn.easy_async("sh -c \"iw dev " .. interface ..
+                                   " link | grep SSID | cut -d ' ' -f 2-\"",
+                               function(stdout)
+            local ssid = stdout
+            if ssid ~= "" then
+                connected = true
+                net_text:set_text(" " .. ssid)
+            else
+                connected = false
+                net_text:set_text(" N/A ")
+            end
+        end)
+
         awful.spawn.easy_async(
             "awk 'NR==3 {printf \"%3.0f\" ,($3/70)*100}' /proc/net/wireless",
             function(stdout) signal_level = tonumber(stdout) end)
@@ -68,7 +81,7 @@ local function worker()
         else
             local iconStrength
             connected = true
-            net_text:set_text(string.format("%" .. 3 .. "d%%", signal_level))
+            -- net_text:set_text(string.format("%" .. 3 .. "d%%", signal_level))
 
             if (signal_level >= 1 and signal_level < 20) then
                 iconStrength = "0"
@@ -101,7 +114,7 @@ local function worker()
         shape = gears.shape.rectangle,
         border_width = dpi(2),
         border_color = "#FFFFFF",
-        height = dpi(176),
+        height = dpi(200),
         width = dpi(512)
     }
 
@@ -151,7 +164,8 @@ local function worker()
                 msg =
                     "ESSID:\t\t" .. essid .. "\n" .. "IP:\t\t" .. inet .. "\n" ..
                         "BSSID\t\t" .. mac .. "\n" .. "" .. metrics_down .. "" ..
-                        metrics_up .. "" .. signal .. "Bit rate:\t" .. bitrate
+                        metrics_up .. "" .. signal .. "Bit rate:\t" .. bitrate ..
+                        "\nStrength:\t" .. signal_level .. "%"
 
             else
                 msg = "Wireless network is disconnected"

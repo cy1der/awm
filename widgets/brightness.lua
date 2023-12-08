@@ -7,10 +7,13 @@ local beautiful = require("beautiful")
 
 local step = 5
 
-local get_brightness_cmd = 'sh -c "brightnessctl -m | cut -d, -f4 | tr -d %"'
-local set_brightness_cmd = "brightnessctl set %d%%"
-local inc_brightness_cmd = "brightnessctl set +" .. step .. "%"
-local dec_brightness_cmd = "brightnessctl set " .. step .. "-%"
+local get_brightness_cmd =
+    'sh -c "brightnessctl --device=amdgpu_bl0 -m | cut -d, -f4 | tr -d %"'
+local set_brightness_cmd = "brightnessctl --device=amdgpu_bl0 set %d%%"
+local inc_brightness_cmd = "brightnessctl --device=amdgpu_bl0 set +" .. step ..
+                               "%"
+local dec_brightness_cmd = "brightnessctl --device=amdgpu_bl0 set " .. step ..
+                               "-%"
 
 local brightness_widget = {}
 
