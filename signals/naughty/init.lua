@@ -155,7 +155,7 @@ naughty.connect_signal("request::display", function(n)
             naughty.layout.box {
                 notification = n,
                 ontop = true,
-                position = "top_right",
+                position = "bottom_right",
                 bg = "#000000",
                 fg = "#FFFFFF",
                 border_width = dpi(2),
@@ -173,7 +173,7 @@ naughty.connect_signal("request::display", function(n)
             naughty.layout.box {
                 notification = n,
                 ontop = true,
-                position = "top_right",
+                position = "bottom_right",
                 bg = "#000000",
                 fg = "#FFFFFF",
                 border_width = dpi(2),

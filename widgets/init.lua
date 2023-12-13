@@ -223,8 +223,6 @@ function _M.create_wibar(s)
                     wibox.container.margin(_M.battery, dpi(8), dpi(8), dpi(8),
                                            dpi(8), "#000000"),
                     wibox.container.margin(_M.wg, dpi(8), dpi(8), dpi(10),
-                                           dpi(10), "#000000"),
-                    wibox.container.margin(_M.notifs, dpi(4), dpi(10), dpi(10),
                                            dpi(10), "#000000")
                 }
             }
@@ -252,7 +250,9 @@ function _M.create_taskbar(s)
             {
                 layout = wibox.layout.fixed.horizontal,
                 wibox.container.margin(wibox.widget.systray(), dpi(12), dpi(12),
-                                       dpi(10), dpi(10), "#000000")
+                                       dpi(10), dpi(10), "#000000"),
+                wibox.container.margin(_M.notifs, dpi(4), dpi(10), dpi(10),
+                                       dpi(10), "#000000")
             }
         }
     }
