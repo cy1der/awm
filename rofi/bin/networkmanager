@@ -25,17 +25,16 @@ function wireless_connect() {
     if [ "$wireless_state" = "unavailable" ]; then
         notify-send "Error" "Interface \"$wireless_interface\" is unavailable" --urgency=critical
     else
-        local ssid=$1
+        local ssid=$@
         local saved_networks="$(nmcli --fields NAME connection show | tail -n +2)"
         
         if [ "$(echo "$saved_networks" | grep -c "$ssid")" = "1" ]; then
-            local command="nmcli connection up $ssid"
+            local attempt_result=$(nmcli connection up "$ssid") 2>&1
         else
             local pass=$(rofi -dmenu -password -p "Password")
-            local command="nmcli device wifi connect $ssid password $pass ifname $wireless_interface"
+            local attempt_result=$(nmcli device wifi connect "$ssid" password "$pass" ifname $wireless_interface) 2>&1
         fi
         
-        local attempt_result=$($command) 2>&1
         
         if [ "$(grep -c "successfully activated" <<< "$attempt_result")" = "1" ]; then
             notify-send "Success" "Connected to \"$ssid\"" --urgency=low
